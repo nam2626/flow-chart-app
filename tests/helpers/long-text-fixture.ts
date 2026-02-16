@@ -1,7 +1,7 @@
-import { createFlowNodeFixture } from './flowchart-fixture';
+﻿import { createFlowNodeFixture } from './flowchart-fixture';
 
 export function buildLongTextStepLabel(): string {
-  return '이 단계는 매우 긴 설명 텍스트를 포함하여 중앙 정렬과 연결선 정합성을 검증하기 위한 테스트 라벨입니다.';
+  return '매우 긴 설명 텍스트를 포함하여 중앙 정렬과 연결선 정합성을 검증하기 위한 테스트 문장입니다.';
 }
 
 export function buildLongTextNode() {

@@ -19,9 +19,11 @@ describe('presentation mode integration', () => {
     fireEvent.click(screen.getByText('프레젠테이션 시작'));
     expect(screen.getByText(/프레젠테이션을 시작했습니다/)).toBeInTheDocument();
     expect(screen.getByTestId('connector-row-1')).toBeInTheDocument();
+    expect(screen.getByTestId('presentation-flow-container').style.borderStyle).toBe('none');
     expect(screen.getByText(/\(1\/2\)/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('다음 단계'));
+    expect(screen.getByTestId('presentation-flow-container').style.borderStyle).toBe('none');
     expect(screen.getByText(/\(2\/2\)/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('이전 단계'));

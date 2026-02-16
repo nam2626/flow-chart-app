@@ -57,6 +57,11 @@ export function isAbsolutePositionForbidden(): boolean {
   return true;
 }
 
+export function isPresentationContainerBorderless(borderStyleValue: string): boolean {
+  const normalized = borderStyleValue.trim().toLowerCase();
+  return normalized === 'none' || normalized === '';
+}
+
 export function hasManualPositionFields(node: Pick<FlowNode, 'x' | 'y'>): boolean {
   return Number.isFinite(node.x) || Number.isFinite(node.y);
 }

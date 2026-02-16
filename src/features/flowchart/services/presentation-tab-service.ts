@@ -75,7 +75,7 @@ function buildHtml(nodes: FlowNode[], currentOrder: number): string {
 </head>
 <body>
   <main style="min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:24px;">
-    <section style="display:flex; flex-direction:column; align-items:center; width:${canvasWidth}px; border:1px solid ${presentationTheme.canvasBorder}; background:${presentationTheme.canvasBackground}; padding:24px 0 32px 0;">
+    <section data-testid="presentation-flow-container" style="display:flex; flex-direction:column; align-items:center; width:${canvasWidth}px; border:none; background:${presentationTheme.canvasBackground}; padding:24px 0 32px 0; min-height:320px;">
       ${stackHtml}
     </section>
   </main>

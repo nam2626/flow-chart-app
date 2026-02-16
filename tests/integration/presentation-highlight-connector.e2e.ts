@@ -11,4 +11,5 @@ test('presentation shows highlighted active node and centered connector row', as
   const connectorRow = page.getByTestId('connector-row-1');
   await expect(connectorRow).toHaveCount(1);
   await expect(page.getByTestId('presentation-node-1')).toBeVisible();
+  await expect(page.getByTestId('presentation-flow-container')).toHaveCSS('border-top-style', 'none');
 });

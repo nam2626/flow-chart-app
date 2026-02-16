@@ -13,6 +13,7 @@ export const ContractMap = {
     hideStepOrderText: true,
     arrowEndOffsetPx: 4,
     themeId: 'presentation-redesign-v1',
+    containerBorderPolicy: 'NONE',
     newTabBlockedCode: 'NEW_TAB_BLOCKED',
     centerConnectorRule: 'CENTER_X_WITH_BOUNDARY_Y'
   },

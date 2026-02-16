@@ -8,6 +8,7 @@ export interface PresentationTheme {
   arrowStroke: string;
   activeGlow: string;
   canvasBorder: string;
+  containerBorderPolicy: 'NONE';
   canvasBackground: string;
   textSizeEm: number;
   baselineShadowBlurPx: number;
@@ -29,6 +30,7 @@ export const presentationTheme: PresentationTheme = {
   arrowStroke: '#0f4c81',
   activeGlow: `0 0 ${BASELINE_SHADOW_BLUR_PX * HIGHLIGHT_MULTIPLIER}px ${BASELINE_SHADOW_SPREAD_PX * HIGHLIGHT_MULTIPLIER}px rgba(15, 76, 129, ${SHADOW_OPACITY})`,
   canvasBorder: '#94a3b8',
+  containerBorderPolicy: 'NONE',
   canvasBackground: '#fcfdff',
   textSizeEm: PRESENTATION_TEXT_SIZE_EM,
   baselineShadowBlurPx: BASELINE_SHADOW_BLUR_PX,

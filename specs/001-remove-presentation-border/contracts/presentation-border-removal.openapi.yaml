@@ -1,0 +1,110 @@
+﻿openapi: 3.0.3
+info:
+  title: Presentation Borderless Rendering Contract
+  version: 1.0.0
+  description: |
+    Contract for presentation mode rendering policy.
+    This feature enforces borderless flowchart container rendering in presentation contexts.
+servers:
+  - url: https://local.flowchart-app.invalid
+paths:
+  /presentation/render-policy:
+    get:
+      summary: Get active presentation render policy
+      operationId: getPresentationRenderPolicy
+      responses:
+        '200':
+          description: Current policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationRenderPolicy'
+    put:
+      summary: Apply presentation render policy
+      operationId: applyPresentationRenderPolicy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresentationRenderPolicy'
+      responses:
+        '200':
+          description: Policy applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationRenderPolicy'
+  /presentation/session-state:
+    patch:
+      summary: Update presentation session state while preserving borderless policy
+      operationId: updatePresentationSessionState
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresentationSessionState'
+      responses:
+        '200':
+          description: Session updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationSessionState'
+components:
+  schemas:
+    PresentationRenderPolicy:
+      type: object
+      required:
+        - mode
+        - showBorder
+        - containerBorderPolicy
+        - alignItems
+      properties:
+        mode:
+          type: string
+          enum: [edit, presentation]
+        showBorder:
+          type: boolean
+          description: Must be false when mode is presentation.
+        containerBorderPolicy:
+          type: string
+          enum: [NONE]
+        alignItems:
+          type: string
+          enum: [center]
+        background:
+          type: string
+        paddingTop:
+          type: integer
+          minimum: 0
+        paddingBottom:
+          type: integer
+          minimum: 0
+      allOf:
+        - if:
+            properties:
+              mode:
+                const: presentation
+          then:
+            properties:
+              showBorder:
+                const: false
+    PresentationSessionState:
+      type: object
+      required:
+        - isPresentationActive
+        - currentStepOrder
+        - nodeCount
+      properties:
+        isPresentationActive:
+          type: boolean
+        currentStepOrder:
+          type: integer
+          minimum: 1
+        nodeCount:
+          type: integer
+          minimum: 0
+        renderPolicy:
+          $ref: '#/components/schemas/PresentationRenderPolicy'

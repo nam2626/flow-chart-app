@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { seedThreeLabeledSteps } from '../helpers/presentation-fixture';
 import { useFlowchartStore } from '@features/flowchart/store/flowchart-store';
 

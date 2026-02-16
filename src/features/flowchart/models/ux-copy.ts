@@ -20,7 +20,8 @@
   exportFailed: '내보내기에 실패했습니다. 입력값을 확인하세요.',
   pngExportSuccess: 'PNG 내보내기가 완료되었습니다.',
   pngExportFailed: 'PNG 내보내기에 실패했습니다. 입력값을 확인하세요.',
-  autoLayoutLocked: '도형 위치는 자동 세로 중앙 정렬 정책으로 관리됩니다.'
+  autoLayoutLocked: '도형 위치는 자동 세로 중앙 정렬 정책으로 관리됩니다.',
+  presentationBorderlessPolicy: '프레젠테이션 컨테이너 테두리는 항상 숨김 처리됩니다.'
 } as const;
 
 export const TERM_GLOSSARY = {

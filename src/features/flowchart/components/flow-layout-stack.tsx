@@ -48,14 +48,17 @@ export function FlowLayoutStack({ nodes, mode, canvasWidthPx, onLabelChange, onC
 
   return (
     <div
+      data-testid={mode === 'presentation' ? 'presentation-flow-container' : 'edit-flow-container'}
       style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         width: `${canvasWidthPx}px`,
-        border: mode === 'presentation' ? `1px solid ${presentationTheme.canvasBorder}` : '1px dashed #9ca3af',
+        // 프레젠테이션에서는 시선 분산을 막기 위해 컨테이너 테두리를 항상 제거한다.
+        border: mode === 'presentation' ? 'none' : '1px dashed #9ca3af',
         background: mode === 'presentation' ? presentationTheme.canvasBackground : 'transparent',
-        padding: '24px 0 32px 0'
+        padding: '24px 0 32px 0',
+        minHeight: mode === 'presentation' ? '320px' : undefined
       }}
     >
       {sortedNodes.map((node, index) => (

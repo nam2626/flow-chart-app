@@ -7,6 +7,7 @@ export interface ProgressResult {
 }
 
 function sortOrders(stepOrders: number[]): number[] {
+  // 모드 재진입 시에도 동일한 정렬 기준을 강제해 진행 순서 적용 시점을 고정한다.
   return [...stepOrders].sort((a, b) => a - b);
 }
 

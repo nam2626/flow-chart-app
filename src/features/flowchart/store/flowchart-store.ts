@@ -12,7 +12,10 @@ import { computeVerticalFlexLayout } from '@features/flowchart/services/arrow-ge
 import { ContractMap } from '@features/flowchart/services/contract-map';
 import { sanitizeShapeColors } from '@features/flowchart/services/color-validation-service';
 import { hasAllNodeLabels, WIDTH_MAX, WIDTH_MIN } from '@features/flowchart/services/flowchart-validation';
-import { measureLayoutApplyMs } from '@features/flowchart/services/performance-budget-service';
+import {
+  measureLayoutApplyMs,
+  PRESENTATION_ENTRY_P95_BUDGET_MS
+} from '@features/flowchart/services/performance-budget-service';
 import { deleteShapeStyle, getShapeStyle, saveShapeStyle } from '@features/flowchart/services/shape-style-storage-service';
 import { openPresentationTab, renderPresentationTab } from '@features/flowchart/services/presentation-tab-service';
 import { getNextProgressState, getPrevProgressState, getValidCurrentStep } from '@features/flowchart/services/progression-service';
@@ -333,7 +336,7 @@ export const useFlowchartStore = create<FlowchartStore>()(
           const activeNodeId = rePos[0].nodeId;
           const withActive = rePos.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId }));
           renderPresentationTab(openResult.tab, withActive, firstOrder);
-          if (durationMs > 300) {
+          if (durationMs > PRESENTATION_ENTRY_P95_BUDGET_MS) {
             console.warn(`레이아웃 재배치 지연 감지: ${Math.round(durationMs)}ms`);
           }
 
