@@ -6,6 +6,36 @@ interface Point {
   y: number;
 }
 
+interface VerticalLayoutResult {
+  nodes: FlowNode[];
+  minHeight: number;
+  gapByNodeId: Record<string, number>;
+}
+
+const TOP_PADDING_PX = 24;
+const BOTTOM_PADDING_PX = 96;
+const MIN_NODE_GAP_PX = 52;
+const CHAR_PER_LINE_ESTIMATE = 18;
+
+function estimateExtraLineCount(label: string): number {
+  const trimmed = label.trim();
+  if (trimmed.length === 0) {
+    return 0;
+  }
+  return Math.max(0, Math.ceil(trimmed.length / CHAR_PER_LINE_ESTIMATE) - 1);
+}
+
+function calculateDynamicGap(node: FlowNode): number {
+  const extraLineCount = estimateExtraLineCount(node.label);
+  const sizeAdjustment = Math.max(0, node.height - 90) * 0.15;
+  return Math.round(MIN_NODE_GAP_PX + extraLineCount * 12 + sizeAdjustment);
+}
+
+export function computeConnectorRowHeight(fromNode: FlowNode, toNode: FlowNode): number {
+  const fromBottom = fromNode.y + fromNode.height;
+  return Math.max(24, toNode.y - fromBottom);
+}
+
 function centerOf(node: FlowNode): Point {
   return { x: node.x + node.width / 2, y: node.y + node.height / 2 };
 }
@@ -54,6 +84,7 @@ export function buildArrowSegment(fromNode: FlowNode, toNode: FlowNode): ArrowRe
   const startBoundary = boundaryPoint(fromNode, toCenter);
   const targetBoundary = boundaryPoint(toNode, fromCenter);
   const endBoundary = offsetBeforeTarget(startBoundary, targetBoundary, ContractMap.presentation.arrowEndOffsetPx);
+  const safeEndY = Math.min(endBoundary.y, toNode.y - 2);
 
   return {
     fromNodeId: fromNode.nodeId,
@@ -61,7 +92,7 @@ export function buildArrowSegment(fromNode: FlowNode, toNode: FlowNode): ArrowRe
     x1: fromCenter.x,
     y1: startBoundary.y,
     x2: toCenter.x,
-    y2: endBoundary.y,
+    y2: safeEndY,
     endOffsetPx: ContractMap.presentation.arrowEndOffsetPx
   };
 }
@@ -72,4 +103,44 @@ export function buildArrowSegments(nodes: FlowNode[]): ArrowRenderSegment[] {
     return [];
   }
   return sorted.slice(0, -1).map((from, i) => buildArrowSegment(from, sorted[i + 1]));
+}
+
+export function buildConnectorRowHeights(nodes: FlowNode[]): number[] {
+  const sorted = [...nodes].sort((a, b) => a.stepOrder - b.stepOrder);
+  if (sorted.length < 2) {
+    return [];
+  }
+  return sorted.slice(0, -1).map((fromNode, i) => computeConnectorRowHeight(fromNode, sorted[i + 1]));
+}
+
+export function computeVerticalFlexLayout(nodes: FlowNode[], canvasWidthPx: number): VerticalLayoutResult {
+  const sorted = [...nodes].sort((a, b) => a.stepOrder - b.stepOrder);
+  const gapByNodeId: Record<string, number> = {};
+  let cursorY = TOP_PADDING_PX;
+
+  const positioned = sorted.map((node) => {
+    const centeredX = Math.round((canvasWidthPx - node.width) / 2);
+    const gapAfter = calculateDynamicGap(node);
+    gapByNodeId[node.nodeId] = gapAfter;
+
+    const nextNode = {
+      ...node,
+      x: centeredX,
+      y: cursorY
+    };
+
+    cursorY += node.height + gapAfter;
+    return nextNode;
+  });
+
+  const minHeight =
+    positioned.length === 0
+      ? 360
+      : Math.max(360, positioned[positioned.length - 1].y + positioned[positioned.length - 1].height + BOTTOM_PADDING_PX);
+
+  return {
+    nodes: positioned,
+    minHeight,
+    gapByNodeId
+  };
 }

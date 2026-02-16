@@ -19,7 +19,8 @@
   exportSuccess: 'SVG 내보내기가 완료되었습니다.',
   exportFailed: '내보내기에 실패했습니다. 입력값을 확인하세요.',
   pngExportSuccess: 'PNG 내보내기가 완료되었습니다.',
-  pngExportFailed: 'PNG 내보내기에 실패했습니다. 입력값을 확인하세요.'
+  pngExportFailed: 'PNG 내보내기에 실패했습니다. 입력값을 확인하세요.',
+  autoLayoutLocked: '도형 위치는 자동 세로 중앙 정렬 정책으로 관리됩니다.'
 } as const;
 
 export const TERM_GLOSSARY = {
@@ -29,4 +30,15 @@ export const TERM_GLOSSARY = {
   limit: '제한',
   presentation: '프레젠테이션',
   centerConnector: '수평 중앙 정렬 화살표'
+} as const;
+
+export const UX_COPY_CHECKLIST = {
+  errorMessages: [
+    FLOW_MESSAGES.presentationUnavailable,
+    FLOW_MESSAGES.presentationTabBlocked,
+    FLOW_MESSAGES.invalidCanvasWidth,
+    FLOW_MESSAGES.emptyStepText
+  ],
+  buttonLabels: ['사각형 추가', '타원 추가', '프레젠테이션 시작', '프레젠테이션 종료', 'SVG 내보내기', 'PNG 내보내기'],
+  validationMessages: [FLOW_MESSAGES.colorValidationFailed, FLOW_MESSAGES.invalidCanvasWidth, FLOW_MESSAGES.emptyStepText]
 } as const;

@@ -16,6 +16,14 @@ export const ContractMap = {
     newTabBlockedCode: 'NEW_TAB_BLOCKED',
     centerConnectorRule: 'CENTER_X_WITH_BOUNDARY_Y'
   },
+  layout: {
+    direction: 'TOP_TO_BOTTOM',
+    crossAxisAlign: 'CENTER',
+    stackMode: 'AUTO_ONLY',
+    positionPolicy: 'FLOW_ONLY',
+    heightPolicy: 'EXPAND_WITH_CONTENT',
+    centerTolerancePx: 0
+  },
   export: {
     sourceView: 'presentation',
     emptyStepText: '모든 단계에 텍스트를 입력해야 합니다.',

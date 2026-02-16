@@ -33,3 +33,8 @@ export function evaluateBudget(metric: string, samples: number[], budgetMs: numb
 export function evaluateCenterXTolerance(actualX: number, expectedX: number, tolerancePx = 0): boolean {
   return Math.abs(actualX - expectedX) <= tolerancePx;
 }
+
+// 레이아웃 재배치 시작부터 반영 완료까지의 구간을 동일 기준으로 측정하기 위한 공용 훅이다.
+export function measureLayoutApplyMs(run: () => void): number {
+  return measureDurationMs(run);
+}

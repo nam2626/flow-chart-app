@@ -1,0 +1,180 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart Flex Center Layout Contract
+  version: 1.0.0
+  description: Logical contract for flow-based vertical flex layout with connector rows and absolute-position ban across edit and presentation views. This file is documentation-only.
+x-contract-mode: logical-documentation-only
+servers:
+  - url: https://api.local.flowchart
+paths:
+  /v1/layout/flex:calculate:
+    post:
+      summary: Calculate flowchart layout for vertical flex stack
+      operationId: calculateFlexLayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlexLayoutRequest'
+      responses:
+        '200':
+          description: Calculated layout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlexLayoutResult'
+  /v1/layout/flex:validate:
+    post:
+      summary: Validate layout constraints for a rendered view
+      operationId: validateFlexLayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlexLayoutValidationRequest'
+      responses:
+        '200':
+          description: Validation outcome
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlexLayoutValidationResult'
+
+components:
+  schemas:
+    ShapeInput:
+      type: object
+      required: [shapeId, order, width, height, textLength]
+      properties:
+        shapeId:
+          type: string
+        order:
+          type: integer
+          minimum: 1
+        width:
+          type: number
+          exclusiveMinimum: 0
+        height:
+          type: number
+          exclusiveMinimum: 0
+        textLength:
+          type: integer
+          minimum: 0
+
+    FlexLayoutRequest:
+      type: object
+      required: [view, shapes]
+      properties:
+        view:
+          type: string
+          enum: [edit, presentation]
+        shapes:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ShapeInput'
+
+    FlowShapeLayoutItem:
+      type: object
+      required: [shapeId, order, centerX, topY, width, height, gapAfter]
+      properties:
+        shapeId:
+          type: string
+        order:
+          type: integer
+          minimum: 1
+        centerX:
+          type: number
+        topY:
+          type: number
+        width:
+          type: number
+          exclusiveMinimum: 0
+        height:
+          type: number
+          exclusiveMinimum: 0
+        gapAfter:
+          type: number
+          minimum: 0
+
+    ConnectorFlowRow:
+      type: object
+      required: [rowId, fromShapeId, toShapeId, centerX, rowTopY, rowHeight, usesAbsolute]
+      properties:
+        rowId:
+          type: string
+        fromShapeId:
+          type: string
+        toShapeId:
+          type: string
+        centerX:
+          type: number
+        rowTopY:
+          type: number
+        rowHeight:
+          type: number
+          exclusiveMinimum: 0
+        usesAbsolute:
+          type: boolean
+          enum: [false]
+
+    FlexLayoutResult:
+      type: object
+      required: [direction, crossAxisAlign, positionPolicy, heightPolicy, items, connectorRows]
+      properties:
+        direction:
+          type: string
+          enum: [TOP_TO_BOTTOM]
+        crossAxisAlign:
+          type: string
+          enum: [CENTER]
+        positionPolicy:
+          type: string
+          enum: [FLOW_ONLY]
+        heightPolicy:
+          type: string
+          enum: [EXPAND_WITH_CONTENT]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowShapeLayoutItem'
+        connectorRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorFlowRow'
+
+    FlexLayoutValidationRequest:
+      type: object
+      required: [view, items, connectorRows]
+      properties:
+        view:
+          type: string
+          enum: [edit, presentation]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowShapeLayoutItem'
+        connectorRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorFlowRow'
+
+    FlexLayoutValidationResult:
+      type: object
+      required: [passRate, mismatchCount, absoluteUsageCount, overlapCount]
+      properties:
+        passRate:
+          type: number
+          minimum: 0
+          maximum: 1
+        mismatchCount:
+          type: integer
+          minimum: 0
+        absoluteUsageCount:
+          type: integer
+          minimum: 0
+        overlapCount:
+          type: integer
+          minimum: 0

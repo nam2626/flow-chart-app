@@ -31,6 +31,37 @@ export interface ConnectorAlignmentState {
   xTolerancePx: 0;
 }
 
+export interface LayoutItemSnapshot {
+  shapeId: string;
+  order: number;
+  centerX: number;
+  topY: number;
+  width: number;
+  height: number;
+  gapAfter: number;
+}
+
+export interface VerticalLayoutSnapshot {
+  layoutId: string;
+  direction: 'TOP_TO_BOTTOM';
+  crossAxisAlign: 'CENTER';
+  stackMode: 'AUTO_ONLY';
+  positionPolicy: 'FLOW_ONLY';
+  heightPolicy: 'EXPAND_WITH_CONTENT';
+  items: LayoutItemSnapshot[];
+  computedAt: number;
+}
+
+export interface ConnectorFlowRowSnapshot {
+  rowId: string;
+  fromShapeId: string;
+  toShapeId: string;
+  centerX: number;
+  rowTopY: number;
+  rowHeight: number;
+  usesAbsolute: false;
+}
+
 export function createFlowNode(diagramId: string, input: CreateNodeInput): FlowNode {
   return {
     nodeId: newId(),

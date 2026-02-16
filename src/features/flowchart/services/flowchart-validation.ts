@@ -48,3 +48,36 @@ export function getExportValidationErrors(nodes: FlowNode[], width: number): str
 export function isCenterAlignedX(actualX: number, expectedX: number): boolean {
   return Math.abs(actualX - expectedX) === 0;
 }
+
+export function isAutoPositionLocked(): boolean {
+  return true;
+}
+
+export function isAbsolutePositionForbidden(): boolean {
+  return true;
+}
+
+export function hasManualPositionFields(node: Pick<FlowNode, 'x' | 'y'>): boolean {
+  return Number.isFinite(node.x) || Number.isFinite(node.y);
+}
+
+export function computeContainerMinHeight(nodes: FlowNode[]): number {
+  if (nodes.length === 0) {
+    return 360;
+  }
+  const sorted = [...nodes].sort((a, b) => a.stepOrder - b.stepOrder);
+  const last = sorted[sorted.length - 1];
+  return Math.max(360, last.y + last.height + 96);
+}
+
+export function hasVerticalOverlap(nodes: FlowNode[]): boolean {
+  const sorted = [...nodes].sort((a, b) => a.stepOrder - b.stepOrder);
+  for (let i = 0; i < sorted.length - 1; i += 1) {
+    const currentBottom = sorted[i].y + sorted[i].height;
+    const nextTop = sorted[i + 1].y;
+    if (currentBottom >= nextTop) {
+      return true;
+    }
+  }
+  return false;
+}

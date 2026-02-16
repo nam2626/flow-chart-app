@@ -89,6 +89,43 @@ export interface CenterConnectorPath {
   endCenterY: number;
 }
 
+export type VerticalDirection = 'TOP_TO_BOTTOM';
+export type CrossAxisAlign = 'CENTER';
+export type StackMode = 'AUTO_ONLY';
+export type PositionPolicy = 'FLOW_ONLY';
+export type HeightPolicy = 'EXPAND_WITH_CONTENT';
+
+export interface LayoutItemState {
+  shapeId: string;
+  order: number;
+  centerX: number;
+  topY: number;
+  width: number;
+  height: number;
+  gapAfter: number;
+}
+
+export interface VerticalLayoutState {
+  layoutId: string;
+  direction: VerticalDirection;
+  crossAxisAlign: CrossAxisAlign;
+  stackMode: StackMode;
+  positionPolicy: PositionPolicy;
+  heightPolicy: HeightPolicy;
+  items: LayoutItemState[];
+  computedAt: number;
+}
+
+export interface ConnectorFlowRow {
+  rowId: string;
+  fromShapeId: string;
+  toShapeId: string;
+  centerX: number;
+  rowTopY: number;
+  rowHeight: number;
+  usesAbsolute: false;
+}
+
 export const CENTER_CONNECTOR_RULE = 'CENTER_X_WITH_BOUNDARY_Y' as const;
 export const CENTER_X_TOLERANCE_PX = 0 as const;
 

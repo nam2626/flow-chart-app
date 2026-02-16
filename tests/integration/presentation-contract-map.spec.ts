@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { ContractMap } from '@features/flowchart/services/contract-map';
 import { alignmentContractFixture, exportContractFixture } from '../helpers/contract-fixture';
 
@@ -11,5 +11,12 @@ describe('presentation contract map', () => {
   it('keeps connector alignment contract constants aligned', () => {
     expect(ContractMap.presentation.centerConnectorRule).toBe(alignmentContractFixture.rule);
     expect(alignmentContractFixture.xTolerancePx).toBe(0);
+  });
+
+  it('keeps vertical layout contract constants aligned', () => {
+    expect(ContractMap.layout.direction).toBe('TOP_TO_BOTTOM');
+    expect(ContractMap.layout.crossAxisAlign).toBe('CENTER');
+    expect(ContractMap.layout.stackMode).toBe('AUTO_ONLY');
+    expect(ContractMap.layout.centerTolerancePx).toBe(0);
   });
 });
