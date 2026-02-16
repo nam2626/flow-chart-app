@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import { CanvasWidthControl } from '@features/flowchart/components/canvas-width-control';
 import { ImportConflictDialog } from '@features/flowchart/components/import-conflict-dialog';
 import { editorVisualRules } from '@features/flowchart/models/editor-visual-rules';
@@ -13,6 +13,27 @@ export function DiagramToolbar(): JSX.Element {
   const [open, setOpen] = useState(false);
   const [fileMenuOpen, setFileMenuOpen] = useState(true);
   const [canvasSettingsOpen, setCanvasSettingsOpen] = useState(true);
+  const fileMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!fileMenuOpen) {
+      return;
+    }
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!fileMenuRef.current) {
+        return;
+      }
+      if (!fileMenuRef.current.contains(event.target as Node)) {
+        setFileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+    };
+  }, [fileMenuOpen]);
 
   const onExportJson = () => {
     exportDiagramJson(state, state.diagram.title);
@@ -82,7 +103,7 @@ export function DiagramToolbar(): JSX.Element {
           flexWrap: 'wrap'
         }}
       >
-        <div style={{ position: 'relative' }}>
+        <div ref={fileMenuRef} style={{ position: 'relative' }}>
           <button
             aria-label="file-menu"
             onClick={() => setFileMenuOpen((prev) => !prev)}
@@ -212,3 +233,7 @@ export function DiagramToolbar(): JSX.Element {
     </div>
   );
 }
+
+
+
+
