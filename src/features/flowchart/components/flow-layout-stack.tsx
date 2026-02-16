@@ -1,5 +1,6 @@
 ﻿import React, { useMemo } from 'react';
 import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+import { editorVisualRules } from '@features/flowchart/models/editor-visual-rules';
 import { presentationTheme } from '@features/flowchart/models/presentation-theme';
 import { buildConnectorFlowRows } from '@features/flowchart/services/center-connector-service';
 
@@ -55,9 +56,9 @@ export function FlowLayoutStack({ nodes, mode, canvasWidthPx, onLabelChange, onC
         alignItems: 'center',
         width: `${canvasWidthPx}px`,
         // 프레젠테이션에서는 시선 분산을 막기 위해 컨테이너 테두리를 항상 제거한다.
-        border: mode === 'presentation' ? 'none' : '1px dashed #9ca3af',
+        border: mode === 'presentation' ? 'none' : `1px dashed ${editorVisualRules.colors.panelBorder}`,
         background: mode === 'presentation' ? presentationTheme.canvasBackground : 'transparent',
-        padding: '24px 0 32px 0',
+        padding: `${editorVisualRules.spacing.sectionGapPx * 2}px 0 ${editorVisualRules.spacing.sectionGapPx * 3}px 0`,
         minHeight: mode === 'presentation' ? '320px' : undefined
       }}
     >

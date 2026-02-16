@@ -43,3 +43,11 @@ export const UX_COPY_CHECKLIST = {
   buttonLabels: ['사각형 추가', '타원 추가', '프레젠테이션 시작', '프레젠테이션 종료', 'SVG 내보내기', 'PNG 내보내기'],
   validationMessages: [FLOW_MESSAGES.colorValidationFailed, FLOW_MESSAGES.invalidCanvasWidth, FLOW_MESSAGES.emptyStepText]
 } as const;
+
+export const EDITOR_SECTION_LABELS = {
+  toolbar: 'Toolbar',
+  shapes: 'Shapes',
+  layers: 'Layers/Steps',
+  canvas: 'Canvas',
+  properties: 'Properties'
+} as const;

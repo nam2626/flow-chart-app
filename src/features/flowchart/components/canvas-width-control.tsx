@@ -21,18 +21,44 @@ export function CanvasWidthControl(): JSX.Element {
   };
 
   return (
-    <label>
-      캔버스 가로 폭
+    <section
+      aria-label="canvas-width-control"
+      style={{
+        display: 'grid',
+        gap: '8px',
+        minWidth: '300px'
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+        <strong style={{ fontSize: '16px' }}>Canvas Width</strong>
+        <span style={{ fontSize: '12px', color: '#6b7280' }}>{`${width}px`}</span>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#6b7280' }}>
+        <span>300px</span>
+        <span>400px</span>
+      </div>
       <input
-        aria-label="canvas-width-input"
-        type="number"
+        aria-label="canvas-width-slider"
+        type="range"
         min={300}
         max={400}
+        step={1}
         value={width}
         onChange={(e) => onChange(e.target.value)}
-        style={{ marginLeft: '8px', width: '100px' }}
       />
-      <span style={{ marginLeft: '8px', fontSize: '12px', color: '#4b5563' }}>{message}</span>
-    </label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span style={{ fontSize: '12px', color: '#6b7280' }}>Width</span>
+        <input
+          aria-label="canvas-width-input"
+          type="number"
+          min={300}
+          max={400}
+          value={width}
+          onChange={(e) => onChange(e.target.value)}
+          style={{ width: '84px' }}
+        />
+      </div>
+      <span style={{ fontSize: '12px', color: '#4b5563' }}>{message}</span>
+    </section>
   );
 }
