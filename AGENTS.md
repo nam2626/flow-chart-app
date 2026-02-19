@@ -15,6 +15,9 @@ Auto-generated from all feature plans. Last updated: 2026-02-16
 - N/A (UI 렌더링 정책 변경, 영속 저장소 변경 없음) (001-remove-presentation-border)
 - TypeScript 5.x, React 18 + React, Zustand, Vite (001-flowchart-ui-redesign)
 - 브라우저 로컬 저장소 및 파일 내보내기(JSON/SVG/PNG), 서버 저장소 없음 (001-flowchart-ui-redesign)
+- TypeScript 5.7.x, React 18.x + React, React DOM, Zustand, Vite 6, Vitest, Playwright (001-presentation-access-link)
+- Browser localStorage (기존 Zustand persist) + in-memory runtime state (001-presentation-access-link)
+- Browser localStorage (existing Zustand persist) + in-memory runtime state (001-presentation-access-link)
 
 - TypeScript 5.x, React 18 + React, React DOM, Zustand, Zustand Persist Middleware (001-flowchart-step-guide)
 
@@ -35,9 +38,9 @@ npm test; npm run lint
 TypeScript 5.x, React 18: Follow standard conventions
 
 ## Recent Changes
+- 001-presentation-access-link: Added TypeScript 5.7.x, React 18.x + React, React DOM, Zustand, Vite 6, Vitest, Playwright
+- 001-presentation-access-link: Added TypeScript 5.7.x, React 18.x + React, React DOM, Zustand, Vite 6, Vitest, Playwright
 - 001-flowchart-ui-redesign: Added TypeScript 5.x, React 18 + React, Zustand, Vite
-- 001-remove-presentation-border: Added TypeScript 5.x, React 18.x + React, Zustand, Vite, Vitest, Playwright
-- 001-enforce-flex-center-layout: Added TypeScript 5.7.x + React 18, React DOM 18, Zustand 4, Vite 6
 
 
 <!-- MANUAL ADDITIONS START -->

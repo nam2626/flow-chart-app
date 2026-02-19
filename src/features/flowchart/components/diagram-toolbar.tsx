@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { CanvasWidthControl } from '@features/flowchart/components/canvas-width-control';
 import { ImportConflictDialog } from '@features/flowchart/components/import-conflict-dialog';
+import { PresentationLinkPanel } from '@features/flowchart/components/presentation-link-panel';
 import { editorVisualRules } from '@features/flowchart/models/editor-visual-rules';
 import { FLOW_MESSAGES } from '@features/flowchart/models/ux-copy';
 import { exportDiagramJson, exportDiagramSvg } from '@features/flowchart/services/json-transfer-service';
@@ -223,6 +224,7 @@ export function DiagramToolbar(): JSX.Element {
       >
         <span style={{ fontSize: '12px', color: '#64748b' }}>File menu actions are grouped above.</span>
       </div>
+      <PresentationLinkPanel />
       <ImportConflictDialog open={open} onClose={() => setOpen(false)} />
       {state.presentation.isRunning ? (
         <span style={{ fontSize: '12px', color: '#374151' }}>{`단축키 ${state.shortcut.nextStepKey}로 다음 단계 이동`}</span>
@@ -233,6 +235,7 @@ export function DiagramToolbar(): JSX.Element {
     </div>
   );
 }
+
 
 
 

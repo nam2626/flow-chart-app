@@ -5,6 +5,7 @@ import type {
   FlowNode,
   FlowchartState,
   PresentationSession,
+  PresentationLinkMetadata,
   ShapeType
 } from '@features/flowchart/models/flowchart-types';
 import { FLOW_MESSAGES } from '@features/flowchart/models/ux-copy';
@@ -18,6 +19,7 @@ import {
 } from '@features/flowchart/services/performance-budget-service';
 import { deleteShapeStyle, getShapeStyle, saveShapeStyle } from '@features/flowchart/services/shape-style-storage-service';
 import { openPresentationTab, renderPresentationTab } from '@features/flowchart/services/presentation-tab-service';
+import { writePresentationSyncSnapshot } from '@features/flowchart/services/presentation-session-sync-service';
 import { getNextProgressState, getPrevProgressState, getValidCurrentStep } from '@features/flowchart/services/progression-service';
 import { nowIso, newId } from '@shared/utils/id-utils';
 
@@ -35,6 +37,7 @@ interface FlowchartStore extends FlowchartState {
   nextPresentationStep: () => void;
   prevPresentationStep: () => void;
   stopPresentation: () => void;
+  setPresentationLinkMetadata: (shareCode: string | null, status: PresentationLinkMetadata['status']) => void;
 }
 
 const DEFAULT_CANVAS_WIDTH = 320;
@@ -71,6 +74,12 @@ const initialState: FlowchartState = {
     message: FLOW_MESSAGES.idle
   },
   presentation: createInitialPresentation(),
+  presentationLink: {
+    shareCode: null,
+    status: null,
+    generatedAt: null,
+    regeneratedAt: null
+  },
   lastSnapshot: null,
   shortcut: {
     diagramId: initialDiagramId,
@@ -133,6 +142,14 @@ function persistNodeStyle(node: FlowNode): void {
   });
 }
 
+function publishSyncSnapshot(nodes: FlowNode[]): void {
+  writePresentationSyncSnapshot({
+    revisionId: newId(),
+    nodes,
+    updatedAt: nowIso()
+  });
+}
+
 export const useFlowchartStore = create<FlowchartStore>()(
   persist(
     (set, get) => ({
@@ -162,6 +179,7 @@ export const useFlowchartStore = create<FlowchartStore>()(
           measureLayoutApplyMs(() => {
             relaidOut = applyAutoVerticalLayout([...prev.nodes, next], prev.diagram.canvasWidthPx);
           });
+          publishSyncSnapshot(relaidOut);
           return {
             nodes: relaidOut,
             diagram: { ...prev.diagram, updatedAt: nowIso() }
@@ -190,6 +208,7 @@ export const useFlowchartStore = create<FlowchartStore>()(
             const updated = state.nodes.map((node) => (node.nodeId === nodeId ? { ...node, label } : node));
             relaidOut = applyAutoVerticalLayout(updated, state.diagram.canvasWidthPx);
           });
+          publishSyncSnapshot(relaidOut);
           return {
             nodes: relaidOut,
             diagram: { ...state.diagram, updatedAt: nowIso() }
@@ -206,6 +225,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
           nodes: state.nodes.map((node) => (node.nodeId === nodeId ? { ...node, ...nextColors } : node)),
           diagram: { ...state.diagram, updatedAt: nowIso() }
         }));
+        const latest = get();
+        publishSyncSnapshot(latest.nodes);
       },
       removeNode: (nodeId) => {
         set((state) => {
@@ -255,6 +276,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
             }
           };
         });
+        const latest = get();
+        publishSyncSnapshot(latest.nodes);
       },
       resetAll: () => {
         set((state) => ({
@@ -274,6 +297,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
           presentation: createInitialPresentation(),
           lastSnapshot: null
         }));
+        const latest = get();
+        publishSyncSnapshot(latest.nodes);
       },
       setActiveNode: (nodeId) => {
         set((state) => ({
@@ -335,7 +360,7 @@ export const useFlowchartStore = create<FlowchartStore>()(
           const firstOrder = rePos[0].stepOrder;
           const activeNodeId = rePos[0].nodeId;
           const withActive = rePos.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId }));
-          renderPresentationTab(openResult.tab, withActive, firstOrder);
+          renderPresentationTab(openResult.tab, withActive, firstOrder, state.diagram.title);
           if (durationMs > PRESENTATION_ENTRY_P95_BUDGET_MS) {
             console.warn(`레이아웃 재배치 지연 감지: ${Math.round(durationMs)}ms`);
           }
@@ -375,7 +400,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
             renderPresentationTab(
               presentationWindowRef,
               state.nodes.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId })),
-              next.currentStepOrder
+              next.currentStepOrder,
+              state.diagram.title
             );
           }
 
@@ -401,7 +427,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
             renderPresentationTab(
               presentationWindowRef,
               state.nodes.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId })),
-              prev.currentStepOrder
+              prev.currentStepOrder,
+              state.diagram.title
             );
           }
 
@@ -429,6 +456,16 @@ export const useFlowchartStore = create<FlowchartStore>()(
             openedInNewTab: false
           },
           progress: { ...state.progress, message: FLOW_MESSAGES.presentationStopped }
+        }));
+      },
+      setPresentationLinkMetadata: (shareCode, status) => {
+        set((state) => ({
+          presentationLink: {
+            shareCode,
+            status,
+            generatedAt: shareCode && status === 'active' ? nowIso() : state.presentationLink.generatedAt,
+            regeneratedAt: shareCode && status === 'active' ? nowIso() : state.presentationLink.regeneratedAt
+          }
         }));
       }
     }),
@@ -472,6 +509,10 @@ export const useFlowchartStore = create<FlowchartStore>()(
             ...createInitialPresentation(),
             ...(state.presentation ?? {})
           },
+          presentationLink: {
+            ...initialState.presentationLink,
+            ...(state.presentationLink ?? {})
+          },
           lastSnapshot: state.lastSnapshot ?? null,
           shortcut: {
             ...initialState.shortcut,
@@ -482,4 +523,5 @@ export const useFlowchartStore = create<FlowchartStore>()(
     }
   )
 );
+
 

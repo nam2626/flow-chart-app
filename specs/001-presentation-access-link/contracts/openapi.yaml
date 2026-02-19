@@ -1,0 +1,154 @@
+﻿openapi: 3.0.3
+info:
+  title: Presentation Link Facade Contract
+  version: 0.1.0
+  description: Logical client-side facade contracts for presentation link creation, access, sync, and revocation.
+servers:
+  - url: https://app.local
+paths:
+  /facade/diagrams/{diagramId}/presentation-link:
+    get:
+      summary: Get active presentation link metadata for a diagram
+      operationId: getPresentationLink
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '200':
+          description: Active link exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationLinkResponse'
+        '404':
+          description: No active link
+    post:
+      summary: Create active presentation link for a diagram
+      operationId: createPresentationLink
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '201':
+          description: Link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationLinkResponse'
+  /facade/diagrams/{diagramId}/presentation-link/regenerate:
+    post:
+      summary: Regenerate active link and revoke previous link/sessions
+      operationId: regeneratePresentationLink
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '200':
+          description: Link regenerated and previous sessions revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationLinkResponse'
+  /facade/presentation/{shareCode}:
+    get:
+      summary: Resolve presentation payload by share code
+      operationId: resolvePresentationPayload
+      parameters:
+        - $ref: '#/components/parameters/ShareCode'
+      responses:
+        '200':
+          description: Presentation payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationPayload'
+        '403':
+          description: Link revoked or denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Link not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /facade/presentation/{shareCode}/events:
+    get:
+      summary: Subscribe to sync/revocation events for presentation session
+      operationId: subscribePresentationEvents
+      parameters:
+        - $ref: '#/components/parameters/ShareCode'
+      responses:
+        '200':
+          description: Event stream connected
+          content:
+            text/event-stream:
+              schema:
+                type: string
+components:
+  parameters:
+    DiagramId:
+      name: diagramId
+      in: path
+      required: true
+      schema:
+        type: string
+    ShareCode:
+      name: shareCode
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 6
+        maxLength: 8
+  schemas:
+    PresentationLinkResponse:
+      type: object
+      required: [diagramId, shareCode, status, createdAt, documentTitle, url]
+      properties:
+        diagramId:
+          type: string
+        shareCode:
+          type: string
+          minLength: 6
+          maxLength: 8
+        status:
+          type: string
+          enum: [active, revoked]
+        createdAt:
+          type: string
+          format: date-time
+        regeneratedAt:
+          type: string
+          format: date-time
+          nullable: true
+        documentTitle:
+          type: string
+        url:
+          type: string
+          format: uri
+    PresentationPayload:
+      type: object
+      required: [shareCode, documentTitle, revisionId, mode, snapshot]
+      properties:
+        shareCode:
+          type: string
+        documentTitle:
+          type: string
+        revisionId:
+          type: string
+        mode:
+          type: string
+          enum: [presentation]
+        snapshot:
+          type: object
+          additionalProperties: true
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        recoverable:
+          type: boolean
