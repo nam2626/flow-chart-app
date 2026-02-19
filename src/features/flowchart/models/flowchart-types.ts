@@ -59,6 +59,13 @@ export interface ShortcutPreference {
   updatedAt: string;
 }
 
+export interface PresentationLinkMetadata {
+  shareCode: string | null;
+  status: 'active' | 'revoked' | null;
+  generatedAt: string | null;
+  regeneratedAt: string | null;
+}
+
 export interface ImportMergeConflict {
   conflictId: string;
   diagramId: string;
@@ -136,6 +143,7 @@ export interface FlowchartState {
   nodes: FlowNode[];
   progress: StepProgressState;
   presentation: PresentationSession;
+  presentationLink: PresentationLinkMetadata;
   lastSnapshot: ChartStateSnapshot | null;
   shortcut: ShortcutPreference;
 }

@@ -9,6 +9,9 @@
   presentationStopped: '프레젠테이션을 종료했습니다.',
   presentationUnavailable: '모든 단계에 텍스트를 입력해야 프레젠테이션을 시작할 수 있습니다.',
   presentationTabBlocked: '브라우저에서 새 탭 열기가 차단되어 프레젠테이션 시작이 취소되었습니다.',
+  presentationLinkCreated: '프레젠테이션 링크가 생성되었습니다.',
+  presentationLinkCopied: '프레젠테이션 링크를 복사했습니다.',
+  presentationLinkRegenerated: '프레젠테이션 링크를 재생성했습니다.',
   colorValidationFailed: '유효한 HEX 색상값을 입력해주세요.',
   resetDone: '도형과 연결 상태를 초기화했습니다.',
   nothingToDelete: '삭제할 도형이 없습니다.',
@@ -30,6 +33,8 @@ export const TERM_GLOSSARY = {
   conflict: '충돌',
   limit: '제한',
   presentation: '프레젠테이션',
+  presentationLink: '프레젠테이션 링크',
+  shareCode: '공유 코드',
   centerConnector: '수평 중앙 정렬 화살표'
 } as const;
 
@@ -40,7 +45,17 @@ export const UX_COPY_CHECKLIST = {
     FLOW_MESSAGES.invalidCanvasWidth,
     FLOW_MESSAGES.emptyStepText
   ],
-  buttonLabels: ['사각형 추가', '타원 추가', '프레젠테이션 시작', '프레젠테이션 종료', 'SVG 내보내기', 'PNG 내보내기'],
+  buttonLabels: [
+    '사각형 추가',
+    '타원 추가',
+    '프레젠테이션 시작',
+    '프레젠테이션 종료',
+    '프레젠테이션 링크 생성',
+    '링크 복사',
+    '링크 재생성',
+    'SVG 내보내기',
+    'PNG 내보내기'
+  ],
   validationMessages: [FLOW_MESSAGES.colorValidationFailed, FLOW_MESSAGES.invalidCanvasWidth, FLOW_MESSAGES.emptyStepText]
 } as const;
 

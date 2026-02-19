@@ -51,7 +51,7 @@ function renderConnector(rowHeight: number): string {
   `;
 }
 
-function buildHtml(nodes: FlowNode[], currentOrder: number): string {
+function buildHtml(nodes: FlowNode[], currentOrder: number, title = 'Presentation'): string {
   const sorted = [...nodes].sort((a, b) => a.stepOrder - b.stepOrder);
   const connectorRows = buildConnectorFlowRows(sorted);
   const canvasWidth = Math.max(320, ...sorted.map((node) => node.width), 320);
@@ -67,7 +67,7 @@ function buildHtml(nodes: FlowNode[], currentOrder: number): string {
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <title>Presentation</title>
+  <title>${escapeHtml(title)}</title>
   <style>
     html, body { margin:0; padding:0; background:${presentationTheme.canvasBackground}; }
     body { font-family: sans-serif; }
@@ -91,13 +91,13 @@ export function openPresentationTab(): OpenPresentationTabResult {
   return { ok: true, tab };
 }
 
-export function renderPresentationTab(tab: Window, nodes: FlowNode[], currentOrder: number): void {
+export function renderPresentationTab(tab: Window, nodes: FlowNode[], currentOrder: number, title?: string): void {
   if (tab === window) {
     return;
   }
   const doc = tab.document;
   doc.open();
-  doc.write(buildHtml(nodes, currentOrder));
+  doc.write(buildHtml(nodes, currentOrder, title));
   doc.close();
 }
 
