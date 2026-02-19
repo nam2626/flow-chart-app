@@ -1,0 +1,129 @@
+﻿openapi: 3.0.3
+info:
+  title: Presentation Color Tab Contract
+  version: 1.0.0
+  description: Contract for per-shape color settings and new-tab presentation mode.
+servers:
+  - url: https://local.flowchart-app
+paths:
+  /shapes/{nodeId}/style:
+    patch:
+      summary: Update per-shape fill/border colors
+      operationId: updateShapeStyle
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShapeStyleUpdateRequest'
+      responses:
+        '200':
+          description: Shape style updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShapeStyleProfile'
+  /presentation/start:
+    post:
+      summary: Start presentation in a new tab
+      operationId: startPresentationNewTab
+      responses:
+        '200':
+          description: Presentation started in new tab
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationStartSuccess'
+        '409':
+          description: New tab blocked and presentation canceled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationStartFailure'
+  /presentation/connectors:
+    get:
+      summary: Fetch center-to-center connector paths
+      operationId: getCenteredConnectorPaths
+      responses:
+        '200':
+          description: Connector paths
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CenteredConnectorPath'
+components:
+  schemas:
+    ShapeStyleUpdateRequest:
+      type: object
+      required: [fillColor, borderColor]
+      properties:
+        fillColor:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+        borderColor:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6})$'
+    ShapeStyleProfile:
+      type: object
+      required: [nodeId, fillColor, borderColor, updatedAt]
+      properties:
+        nodeId:
+          type: string
+        fillColor:
+          type: string
+        borderColor:
+          type: string
+        updatedAt:
+          type: string
+    PresentationStartSuccess:
+      type: object
+      required: [isRunning, openedInNewTab, centerAligned]
+      properties:
+        isRunning:
+          type: boolean
+          enum: [true]
+        openedInNewTab:
+          type: boolean
+          enum: [true]
+        centerAligned:
+          type: boolean
+          enum: [true]
+    PresentationStartFailure:
+      type: object
+      required: [isRunning, tabBlocked, reasonCode, message]
+      properties:
+        isRunning:
+          type: boolean
+          enum: [false]
+        tabBlocked:
+          type: boolean
+          enum: [true]
+        reasonCode:
+          type: string
+          enum: [NEW_TAB_BLOCKED]
+        message:
+          type: string
+    CenteredConnectorPath:
+      type: object
+      required: [fromNodeId, toNodeId, startX, startY, endX, endY]
+      properties:
+        fromNodeId:
+          type: string
+        toNodeId:
+          type: string
+        startX:
+          type: number
+        startY:
+          type: number
+        endX:
+          type: number
+        endY:
+          type: number

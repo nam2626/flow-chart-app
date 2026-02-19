@@ -23,15 +23,19 @@
 **Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
 **Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
 **Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Performance Goals**: [domain-specific, e.g., p95 latency, render time, bundle size budget]  
+**Constraints**: [domain-specific, e.g., <300ms p95, memory budget, network call limits]  
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- ÄÚµå Ç°Áú: ¸°Æ®/Á¤Àû ºÐ¼®/Å¸ÀÔ °Ë»ç Àû¿ë ¹üÀ§¿Í Åë°ú ±âÁØÀÌ Á¤ÀÇµÇ¾ú´Â°¡?
+- Å×½ºÆ® Ç¥ÁØ: ´ÜÀ§ Å×½ºÆ® + »ç¿ëÀÚ Èå¸§(ÅëÇÕ/E2E) Å×½ºÆ® Àü·«ÀÌ Æ÷ÇÔµÇ¾ú´Â°¡?
+- UX ÀÏ°ü¼º: ±âÁ¸ UI ÆÐÅÏ/¿ë¾î/ÇÇµå¹é ±ÔÄ¢ ÁØ¼ö ¹æ¾ÈÀÌ ¹®¼­È­µÇ¾ú´Â°¡?
+- ¼º´É ¿¹»ê: p95, ·»´õ¸µ, ¹øµé/¸Þ¸ð¸® ¿¹»ê ¹× ÃøÁ¤ ¹æ¹ýÀÌ Á¤ÀÇµÇ¾ú´Â°¡?
+- ÁÖ¼®/³×ÀÌ¹Ö/±¸Á¶: ÇÑ±Û ÁÖ¼® ¿øÄ¢, ³×ÀÌ¹Ö ±ÔÄ¢, ´Ü¼ø Æú´õ ±¸Á¶°¡ °èÈ¹¿¡ ¹Ý¿µµÇ¾ú´Â°¡?
 
 ## Project Structure
 
@@ -39,12 +43,12 @@
 
 ```text
 specs/[###-feature]/
-â”œâ”€â”€ plan.md              # This file (/speckit.plan command output)
-â”œâ”€â”€ research.md          # Phase 0 output (/speckit.plan command)
-â”œâ”€â”€ data-model.md        # Phase 1 output (/speckit.plan command)
-â”œâ”€â”€ quickstart.md        # Phase 1 output (/speckit.plan command)
-â”œâ”€â”€ contracts/           # Phase 1 output (/speckit.plan command)
-â””â”€â”€ tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+¦§¦¡¦¡ plan.md              # This file (/speckit.plan command output)
+¦§¦¡¦¡ research.md          # Phase 0 output (/speckit.plan command)
+¦§¦¡¦¡ data-model.md        # Phase 1 output (/speckit.plan command)
+¦§¦¡¦¡ quickstart.md        # Phase 1 output (/speckit.plan command)
+¦§¦¡¦¡ contracts/           # Phase 1 output (/speckit.plan command)
+¦¦¦¡¦¡ tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
 ```
 
 ### Source Code (repository root)
@@ -58,37 +62,34 @@ specs/[###-feature]/
 ```text
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-â”œâ”€â”€ models/
-â”œâ”€â”€ services/
-â”œâ”€â”€ cli/
-â””â”€â”€ lib/
+¦§¦¡¦¡ features/
+¦¢   ¦¦¦¡¦¡ [feature]/
+¦§¦¡¦¡ shared/
+¦¦¦¡¦¡ app/
 
 tests/
-â”œâ”€â”€ contract/
-â”œâ”€â”€ integration/
-â””â”€â”€ unit/
+¦§¦¡¦¡ integration/
+¦¦¦¡¦¡ unit/
 
 # [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
 backend/
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ models/
-â”‚   â”œâ”€â”€ services/
-â”‚   â””â”€â”€ api/
-â””â”€â”€ tests/
+¦§¦¡¦¡ src/
+¦¢   ¦§¦¡¦¡ features/
+¦¢   ¦¦¦¡¦¡ shared/
+¦¦¦¡¦¡ tests/
 
 frontend/
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ components/
-â”‚   â”œâ”€â”€ pages/
-â”‚   â””â”€â”€ services/
-â””â”€â”€ tests/
+¦§¦¡¦¡ src/
+¦¢   ¦§¦¡¦¡ features/
+¦¢   ¦¦¦¡¦¡ shared/
+¦¦¦¡¦¡ tests/
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/
-â””â”€â”€ [same as backend above]
+¦¦¦¡¦¡ [same as backend above]
 
 ios/ or android/
-â””â”€â”€ [platform-specific structure: feature modules, UI flows, platform tests]
+¦¦¦¡¦¡ [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real

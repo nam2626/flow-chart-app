@@ -1,0 +1,103 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart UI Redesign Local Contract
+  version: 1.0.0
+  description: |
+    UI 리디자인 범위 내에서 기능 동등성 검증을 위한 로컬 계약 문서.
+    서버 API가 아닌 클라이언트 상호작용 계약을 OpenAPI 형식으로 정리한다.
+servers:
+  - url: http://localhost:5173
+    description: Local Vite development server
+paths:
+  /editor/layout:
+    get:
+      summary: 편집 모드 레이아웃 구성 조회
+      operationId: getEditorLayout
+      responses:
+        '200':
+          description: 편집 모드 섹션 구성
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditorLayout'
+  /editor/export/{format}:
+    post:
+      summary: 현재 플로우차트 내보내기 수행
+      operationId: exportFlowchart
+      parameters:
+        - in: path
+          name: format
+          required: true
+          schema:
+            type: string
+            enum: [json, svg, png]
+      responses:
+        '200':
+          description: 내보내기 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportResult'
+        '400':
+          description: 지원하지 않는 포맷
+  /editor/canvas-width:
+    patch:
+      summary: 캔버스 폭 변경
+      operationId: updateCanvasWidth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [width]
+              properties:
+                width:
+                  type: integer
+                  minimum: 300
+                  maximum: 400
+      responses:
+        '200':
+          description: 폭 변경 반영
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  width:
+                    type: integer
+        '422':
+          description: 유효성 검증 실패
+components:
+  schemas:
+    EditorLayout:
+      type: object
+      required: [mode, sections]
+      properties:
+        mode:
+          type: string
+          enum: [edit]
+        sections:
+          type: array
+          items:
+            type: object
+            required: [id, role, visible]
+            properties:
+              id:
+                type: string
+              role:
+                type: string
+                enum: [action, navigation, workspace, inspector]
+              visible:
+                type: boolean
+    ExportResult:
+      type: object
+      required: [format, success]
+      properties:
+        format:
+          type: string
+          enum: [json, svg, png]
+        success:
+          type: boolean
+        fileName:
+          type: string

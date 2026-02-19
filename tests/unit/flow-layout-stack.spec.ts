@@ -21,4 +21,14 @@ describe('flow-layout-stack', () => {
     expect(node).not.toHaveStyle({ position: 'absolute' });
     expect(screen.getByTestId('connector-row-1')).toBeInTheDocument();
   });
+
+  it('keeps flow container as vertical flex with centered cross axis in edit mode', () => {
+    const nodes = [createFlowNodeFixture(1, 'rectangle', 'A')];
+    render(React.createElement(FlowLayoutStack, { nodes, mode: 'edit', canvasWidthPx: 320 }));
+
+    const container = screen.getByTestId('edit-flow-container');
+    expect(container).toHaveStyle({ display: 'flex' });
+    expect(container).toHaveStyle({ flexDirection: 'column' });
+    expect(container).toHaveStyle({ alignItems: 'center' });
+  });
 });

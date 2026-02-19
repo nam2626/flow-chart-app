@@ -1,0 +1,115 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart Editor Contract
+  version: 1.0.0
+paths:
+  /flowcharts:
+    post:
+      summary: Create or overwrite flowchart draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Flowchart'
+      responses:
+        '200':
+          description: Saved
+  /flowcharts/{flowchartId}:
+    get:
+      summary: Get flowchart by id
+      parameters:
+        - in: path
+          name: flowchartId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flowchart'
+        '404':
+          description: Not found
+  /flowcharts/{flowchartId}/validate:
+    post:
+      summary: Validate flowchart before export
+      parameters:
+        - in: path
+          name: flowchartId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+  /flowcharts/{flowchartId}/export:
+    post:
+      summary: Export flowchart
+      parameters:
+        - in: path
+          name: flowchartId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Exported file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid chart
+        '500':
+          description: Export failure
+components:
+  schemas:
+    Flowchart:
+      type: object
+      required: [id, canvasWidthPx, background, steps]
+      properties:
+        id:
+          type: string
+        canvasWidthPx:
+          type: integer
+          minimum: 300
+          maximum: 400
+        background:
+          type: string
+          enum: [transparent]
+        steps:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/FlowStep'
+    FlowStep:
+      type: object
+      required: [id, order, shapeType, text]
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 1
+        shapeType:
+          type: string
+          enum: [rectangle, ellipse]
+        text:
+          type: string
+          minLength: 1

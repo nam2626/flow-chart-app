@@ -33,6 +33,19 @@ export function evaluateBudget(metric: string, samples: number[], budgetMs: numb
   };
 }
 
+export function evaluateRelativeRegression(
+  baselineSamples: number[],
+  candidateSamples: number[],
+  allowedRatio = 1
+): boolean {
+  const baselineP95 = percentile95(baselineSamples);
+  const candidateP95 = percentile95(candidateSamples);
+  if (baselineP95 === 0) {
+    return candidateP95 === 0;
+  }
+  return candidateP95 / baselineP95 <= allowedRatio;
+}
+
 export function evaluateCenterXTolerance(actualX: number, expectedX: number, tolerancePx = 0): boolean {
   return Math.abs(actualX - expectedX) <= tolerancePx;
 }

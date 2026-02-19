@@ -1,0 +1,226 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart Presentation Style API Contract
+  version: 1.0.0
+  description: Logical contract for per-shape style persistence and presentation connector rendering.
+servers:
+  - url: https://api.local.flowchart
+paths:
+  /v1/shape-styles/{shapeId}:
+    get:
+      summary: Get latest style for a shape
+      operationId: getShapeStyle
+      parameters:
+        - name: shapeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Style found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShapeVisualStyle'
+        '404':
+          description: Style not found
+    put:
+      summary: Upsert style for a shape
+      operationId: upsertShapeStyle
+      parameters:
+        - name: shapeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShapeVisualStyleUpdate'
+      responses:
+        '200':
+          description: Style saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShapeVisualStyle'
+        '400':
+          description: Invalid color or style values
+  /v1/presentation/sessions:
+    post:
+      summary: Start presentation session
+      operationId: startPresentationSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartPresentationRequest'
+      responses:
+        '201':
+          description: Session started with typography profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationSession'
+  /v1/presentation/sessions/{sessionId}/connectors:calculate:
+    post:
+      summary: Calculate boundary-based connector geometry
+      operationId: calculateConnectorGeometry
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorCalculationRequest'
+      responses:
+        '200':
+          description: Connector states for adjacent shape pairs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connectors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PresentationConnectorState'
+  /v1/presentation/sessions/{sessionId}/close:
+    post:
+      summary: End presentation session
+      operationId: closePresentationSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session closed
+
+components:
+  schemas:
+    ShapeVisualStyle:
+      type: object
+      required:
+        - shapeId
+        - fillColor
+        - borderColor
+        - shadowBlur
+        - shadowSpread
+        - shadowOpacity
+        - updatedAt
+      properties:
+        shapeId:
+          type: string
+        fillColor:
+          type: string
+        borderColor:
+          type: string
+        shadowBlur:
+          type: number
+          minimum: 0
+        shadowSpread:
+          type: number
+          minimum: 0
+        shadowOpacity:
+          type: number
+          minimum: 0
+          maximum: 1
+        updatedAt:
+          type: string
+          format: date-time
+    ShapeVisualStyleUpdate:
+      type: object
+      required:
+        - fillColor
+        - borderColor
+      properties:
+        fillColor:
+          type: string
+        borderColor:
+          type: string
+    StartPresentationRequest:
+      type: object
+      required:
+        - shapeIds
+      properties:
+        shapeIds:
+          type: array
+          items:
+            type: string
+        startStepIndex:
+          type: integer
+          minimum: 0
+          default: 0
+    PresentationSession:
+      type: object
+      required:
+        - sessionId
+        - textSizeEm
+        - highlightShadowMultiplier
+        - opacityPolicy
+      properties:
+        sessionId:
+          type: string
+        textSizeEm:
+          type: number
+          enum: [1.3]
+        highlightShadowMultiplier:
+          type: number
+          enum: [2.0]
+        opacityPolicy:
+          type: string
+          enum: [unchanged]
+    ConnectorCalculationRequest:
+      type: object
+      required:
+        - pairs
+      properties:
+        pairs:
+          type: array
+          items:
+            type: object
+            required: [sourceShapeId, targetShapeId]
+            properties:
+              sourceShapeId:
+                type: string
+              targetShapeId:
+                type: string
+    PresentationConnectorState:
+      type: object
+      required:
+        - sourceShapeId
+        - targetShapeId
+        - startPoint
+        - endPoint
+        - isVisible
+      properties:
+        sourceShapeId:
+          type: string
+        targetShapeId:
+          type: string
+        startPoint:
+          $ref: '#/components/schemas/Point'
+        endPoint:
+          $ref: '#/components/schemas/Point'
+        isVisible:
+          type: boolean
+    Point:
+      type: object
+      required: [x, y]
+      properties:
+        x:
+          type: number
+        y:
+          type: number

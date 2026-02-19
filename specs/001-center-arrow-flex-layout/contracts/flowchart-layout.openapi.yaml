@@ -1,0 +1,170 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart Vertical Center Layout Contract
+  version: 1.0.0
+  description: Logical contract for vertical flex stacking, center-aligned connectors, and dynamic spacing without overlap. This contract is documentation-only and not a runtime HTTP API implementation target.
+x-contract-mode: logical-documentation-only
+servers:
+  - url: https://api.local.flowchart
+paths:
+  /v1/layout/vertical:calculate:
+    post:
+      summary: Calculate vertical layout and connector alignment
+      operationId: calculateVerticalLayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerticalLayoutRequest'
+      responses:
+        '200':
+          description: Layout calculation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerticalLayoutResult'
+  /v1/layout/vertical:validate:
+    post:
+      summary: Validate vertical layout consistency in a rendered view
+      operationId: validateVerticalLayout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerticalLayoutValidationRequest'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerticalLayoutValidationResult'
+
+components:
+  schemas:
+    ShapeInput:
+      type: object
+      required: [shapeId, order, width, height, textLength]
+      properties:
+        shapeId:
+          type: string
+        order:
+          type: integer
+          minimum: 1
+        width:
+          type: number
+          exclusiveMinimum: 0
+        height:
+          type: number
+          exclusiveMinimum: 0
+        textLength:
+          type: integer
+          minimum: 0
+    VerticalLayoutRequest:
+      type: object
+      required: [view, shapes]
+      properties:
+        view:
+          type: string
+          enum: [edit, presentation]
+        shapes:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ShapeInput'
+    LayoutItemState:
+      type: object
+      required: [shapeId, order, centerX, topY, width, height, gapAfter]
+      properties:
+        shapeId:
+          type: string
+        order:
+          type: integer
+          minimum: 1
+        centerX:
+          type: number
+        topY:
+          type: number
+        width:
+          type: number
+          exclusiveMinimum: 0
+        height:
+          type: number
+          exclusiveMinimum: 0
+        gapAfter:
+          type: number
+          minimum: 0
+    ConnectorCenterAlignment:
+      type: object
+      required: [fromShapeId, toShapeId, startX, startY, endX, endY, xTolerancePx, overlapFree]
+      properties:
+        fromShapeId:
+          type: string
+        toShapeId:
+          type: string
+        startX:
+          type: number
+        startY:
+          type: number
+        endX:
+          type: number
+        endY:
+          type: number
+        xTolerancePx:
+          type: integer
+          enum: [0]
+        overlapFree:
+          type: boolean
+          enum: [true]
+    VerticalLayoutResult:
+      type: object
+      required: [direction, crossAxisAlign, stackMode, items, connectors]
+      properties:
+        direction:
+          type: string
+          enum: [TOP_TO_BOTTOM]
+        crossAxisAlign:
+          type: string
+          enum: [CENTER]
+        stackMode:
+          type: string
+          enum: [AUTO_ONLY]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LayoutItemState'
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorCenterAlignment'
+    VerticalLayoutValidationRequest:
+      type: object
+      required: [view, items, connectors]
+      properties:
+        view:
+          type: string
+          enum: [edit, presentation]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LayoutItemState'
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorCenterAlignment'
+    VerticalLayoutValidationResult:
+      type: object
+      required: [passRate, mismatchCount, overlapCount]
+      properties:
+        passRate:
+          type: number
+          minimum: 0
+          maximum: 1
+        mismatchCount:
+          type: integer
+          minimum: 0
+        overlapCount:
+          type: integer
+          minimum: 0

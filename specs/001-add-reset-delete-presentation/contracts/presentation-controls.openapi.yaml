@@ -1,0 +1,108 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart Presentation Controls Contract
+  version: 1.0.0
+paths:
+  /flowchart/shapes/{shapeId}:
+    delete:
+      summary: Delete one shape and reindex orders
+      parameters:
+        - in: path
+          name: shapeId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Shape deleted and order reindexed
+        '404':
+          description: Shape not found
+  /flowchart/reset:
+    post:
+      summary: Reset chart to defaults after confirmation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirmed]
+              properties:
+                confirmed:
+                  type: boolean
+      responses:
+        '200':
+          description: Chart, presentation state, and canvas settings reset
+        '400':
+          description: Confirmation missing or invalid
+  /flowchart/presentation/start:
+    post:
+      summary: Start presentation mode from first valid step
+      responses:
+        '200':
+          description: Presentation started
+        '409':
+          description: No valid steps to present
+  /flowchart/presentation/next:
+    post:
+      summary: Move to next step in presentation mode
+      responses:
+        '200':
+          description: Moved to next step
+        '409':
+          description: Not running or already at last step
+  /flowchart/presentation/previous:
+    post:
+      summary: Move to previous step in presentation mode
+      responses:
+        '200':
+          description: Moved to previous step
+        '409':
+          description: Not running or already at first step
+  /flowchart/presentation/exit:
+    post:
+      summary: Exit presentation mode and return to editor
+      responses:
+        '200':
+          description: Presentation exited without data loss
+components:
+  schemas:
+    FlowStep:
+      type: object
+      required: [id, order, shapeType, label, isActive]
+      properties:
+        id:
+          type: string
+        order:
+          type: integer
+          minimum: 1
+        shapeType:
+          type: string
+          enum: [rectangle, ellipse]
+        label:
+          type: string
+          minLength: 1
+        isActive:
+          type: boolean
+    PresentationSession:
+      type: object
+      required: [id, isRunning]
+      properties:
+        id:
+          type: string
+        isRunning:
+          type: boolean
+        currentOrder:
+          type: integer
+          minimum: 1
+    CanvasSettings:
+      type: object
+      required: [widthPx, backgroundMode]
+      properties:
+        widthPx:
+          type: integer
+          minimum: 300
+          maximum: 400
+        backgroundMode:
+          type: string
+          enum: [transparent]

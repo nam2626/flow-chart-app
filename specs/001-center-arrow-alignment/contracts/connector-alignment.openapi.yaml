@@ -1,0 +1,129 @@
+﻿openapi: 3.0.3
+info:
+  title: Connector Alignment Contract
+  version: 1.0.0
+  description: Logical contract for center-x and boundary-y connector alignment across edit and presentation views.
+servers:
+  - url: https://api.local.flowchart
+paths:
+  /v1/connectors/align:calculate:
+    post:
+      summary: Calculate connector coordinates with center-x alignment
+      operationId: calculateConnectorAlignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorAlignmentRequest'
+      responses:
+        '200':
+          description: Alignment results for adjacent shape pairs
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [rule, xTolerancePx, connectors]
+                properties:
+                  rule:
+                    type: string
+                    enum: [CENTER_X_WITH_BOUNDARY_Y]
+                  xTolerancePx:
+                    type: integer
+                    enum: [0]
+                  connectors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectorAlignmentState'
+  /v1/connectors/align:validate:
+    post:
+      summary: Validate connector alignment in a rendered view
+      operationId: validateConnectorAlignment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorAlignmentValidationRequest'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorAlignmentValidationResult'
+
+components:
+  schemas:
+    ShapeLayoutSnapshot:
+      type: object
+      required: [shapeId, stepOrder, x, y, width, height]
+      properties:
+        shapeId:
+          type: string
+        stepOrder:
+          type: integer
+          minimum: 1
+        x:
+          type: number
+        y:
+          type: number
+        width:
+          type: number
+          exclusiveMinimum: 0
+        height:
+          type: number
+          exclusiveMinimum: 0
+    ConnectorAlignmentRequest:
+      type: object
+      required: [shapes]
+      properties:
+        shapes:
+          type: array
+          minItems: 2
+          items:
+            $ref: '#/components/schemas/ShapeLayoutSnapshot'
+    ConnectorAlignmentState:
+      type: object
+      required: [fromShapeId, toShapeId, startX, startY, endX, endY, alignmentRule, xTolerancePx]
+      properties:
+        fromShapeId:
+          type: string
+        toShapeId:
+          type: string
+        startX:
+          type: number
+        startY:
+          type: number
+        endX:
+          type: number
+        endY:
+          type: number
+        alignmentRule:
+          type: string
+          enum: [CENTER_X_WITH_BOUNDARY_Y]
+        xTolerancePx:
+          type: integer
+          enum: [0]
+    ConnectorAlignmentValidationRequest:
+      type: object
+      required: [view, connectors]
+      properties:
+        view:
+          type: string
+          enum: [edit, presentation]
+        connectors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorAlignmentState'
+    ConnectorAlignmentValidationResult:
+      type: object
+      required: [passRate, mismatchCount]
+      properties:
+        passRate:
+          type: number
+          minimum: 0
+          maximum: 1
+        mismatchCount:
+          type: integer
+          minimum: 0

@@ -1,0 +1,147 @@
+﻿openapi: 3.0.3
+info:
+  title: Presentation & PNG Export Contract
+  version: 1.0.0
+  description: Contract for presentation component switch and PNG export.
+servers:
+  - url: https://local.flowchart-app
+paths:
+  /presentation/start:
+    post:
+      summary: Activate presentation-only component
+      operationId: startPresentation
+      responses:
+        '200':
+          description: Presentation mode activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationStateResponse'
+  /presentation/next:
+    post:
+      summary: Move to next presentation step
+      operationId: nextPresentationStep
+      responses:
+        '200':
+          description: Next step activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationStateResponse'
+  /presentation/prev:
+    post:
+      summary: Move to previous presentation step
+      operationId: prevPresentationStep
+      responses:
+        '200':
+          description: Previous step activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationStateResponse'
+  /presentation/stop:
+    post:
+      summary: Exit presentation-only component
+      operationId: stopPresentation
+      responses:
+        '200':
+          description: Presentation mode deactivated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresentationStateResponse'
+  /export/png:
+    post:
+      summary: Export flowchart to PNG from presentation-only view
+      operationId: exportPng
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PngExportRequest'
+      responses:
+        '200':
+          description: PNG export succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PngExportSuccess'
+        '400':
+          description: Invalid export request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PngExportFailure'
+components:
+  schemas:
+    PresentationStateResponse:
+      type: object
+      required:
+        - isActive
+        - currentStepOrder
+        - hideStepOrderText
+        - arrowEndOffsetPx
+        - themeId
+      properties:
+        isActive:
+          type: boolean
+        currentStepOrder:
+          type: integer
+          nullable: true
+          minimum: 1
+        hideStepOrderText:
+          type: boolean
+          enum: [true]
+        arrowEndOffsetPx:
+          type: integer
+          enum: [4]
+        themeId:
+          type: string
+          example: presentation-redesign-v1
+    PngExportRequest:
+      type: object
+      required:
+        - diagramId
+        - title
+        - sourceView
+      properties:
+        diagramId:
+          type: string
+        title:
+          type: string
+          minLength: 1
+        sourceView:
+          type: string
+          enum: [presentation]
+    PngExportSuccess:
+      type: object
+      required:
+        - status
+        - fileName
+        - message
+      properties:
+        status:
+          type: string
+          enum: [success]
+        fileName:
+          type: string
+          pattern: '^[a-z0-9-]+\\.png$'
+        message:
+          type: string
+          example: PNG 내보내기가 완료되었습니다.
+    PngExportFailure:
+      type: object
+      required:
+        - status
+        - message
+        - reasonCode
+      properties:
+        status:
+          type: string
+          enum: [failed]
+        message:
+          type: string
+        reasonCode:
+          type: string
+          enum: [EMPTY_STEP_TEXT, EMPTY_DIAGRAM, INVALID_SOURCE_VIEW]

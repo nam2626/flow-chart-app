@@ -1,50 +1,88 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: template -> 1.0.0
+- Modified principles:
+  - template principle 1 -> I. ÄÚµå Ç°Áú ¿ì¼±
+  - template principle 2 -> II. Å×½ºÆ® Ç¥ÁØ ÇÊ¼ö
+  - template principle 3 -> III. »ç¿ëÀÚ °æÇè ÀÏ°ü¼º º¸Àå
+  - template principle 4 -> IV. ¼º´É ¿¹»ê ÁØ¼ö
+  - template principle 5 -> V. ÇÑ±Û ÁÖ¼®, ³×ÀÌ¹Ö, ´Ü¼ø ±¸Á¶
+- Added sections:
+  - ±â¼ú ¹× Ç°Áú Ç¥ÁØ
+  - °³¹ß ¿öÅ©ÇÃ·Î ¹× Ç°Áú °ÔÀÌÆ®
+- Removed sections:
+  - ¾øÀ½
+- Templates requiring updates:
+  - updated: .specify/templates/plan-template.md
+  - updated: .specify/templates/spec-template.md
+  - updated: .specify/templates/tasks-template.md
+  - pending: .specify/templates/commands/*.md (µð·ºÅÍ¸® ¾øÀ½)
+- Follow-up TODOs:
+  - ¾øÀ½
+-->
+
+# flowchart-app Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. ÄÚµå Ç°Áú ¿ì¼±
+¸ðµç º´ÇÕ °¡´É ÄÚµå´Â ¸°Æ®, Á¤Àû ºÐ¼®, Å¸ÀÔ °Ë»ç(Àû¿ë ¾ð¾î ÇÑÁ¤)¸¦ Åë°úÇØ¾ß ÇÑ´Ù.
+Áßº¹ ·ÎÁ÷Àº °øÅëÈ­ÇÏ°í, ÇÔ¼ö/¸ðµâÀº ´ÜÀÏ Ã¥ÀÓÀ» À¯ÁöÇØ¾ß ÇÏ¸ç, ¼øÈ¯ ÀÇÁ¸À» ±ÝÁöÇÑ´Ù.
+¸®ºä¿¡¼­ Ç°Áú ±âÁØ ¹Ì´ÞÀÌ È®ÀÎµÇ¸é ±â´É ¿Ï¼º ¿©ºÎ¿Í ¹«°üÇÏ°Ô ¹Ý·ÁÇÑ´Ù.
+ÀÌ ¿øÄ¢Àº À¯Áöº¸¼ö ºñ¿ë°ú °áÇÔ À¯ÀÔ·üÀ» µ¿½Ã¿¡ ³·Ãß±â À§ÇÑ ºñ°¡¿ª ±âÁØÀÌ´Ù.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args â†’ stdout, errors â†’ stderr; Support JSON + human-readable formats -->
+### II. Å×½ºÆ® Ç¥ÁØ ÇÊ¼ö
+¸ðµç ±â´É º¯°æÀº ÃÖ¼Ò ´ÜÀ§ Å×½ºÆ®¸¦ Æ÷ÇÔÇØ¾ß ÇÏ¸ç, »ç¿ëÀÚ Èå¸§ º¯°æÀº ÅëÇÕ ¶Ç´Â E2E
+Å×½ºÆ®¸¦ ¹Ýµå½Ã Æ÷ÇÔÇØ¾ß ÇÑ´Ù. ¹ö±× ¼öÁ¤Àº Àç¹ß ¹æÁö Å×½ºÆ®¸¦ ¸ÕÀú Ãß°¡ÇÏ°í ¼öÁ¤ÇÑ´Ù.
+Å×½ºÆ®°¡ ¾ø´Â ±â´É PRÀº ¿¹¿Ü ½ÂÀÎ ¾øÀÌ º´ÇÕÇÒ ¼ö ¾ø´Ù.
+ÀÌ ¿øÄ¢Àº È¸±Í¸¦ Á¤·®ÀûÀ¸·Î ÅëÁ¦ÇÏ°í ¹èÆ÷ ½Å·Úµµ¸¦ À¯ÁöÇÏ±â À§ÇÑ ÇÊ¼ö Á¶°ÇÀÌ´Ù.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written â†’ User approved â†’ Tests fail â†’ Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. »ç¿ëÀÚ °æÇè ÀÏ°ü¼º º¸Àå
+µ¿ÀÏÇÑ ¸ñÀûÀÇ UI ¿ä¼Ò´Â È­¸é °£ µ¿ÀÏÇÑ ¿ë¾î, »óÈ£ÀÛ¿ë ÆÐÅÏ, »óÅÂ ÇÇµå¹éÀ» Á¦°øÇØ¾ß ÇÑ´Ù.
+¿À·ù ¸Þ½ÃÁö, ¹öÆ° ¹®±¸, Æû °ËÁõ ÇÇµå¹éÀº °øÅë ±ÔÄ¢À» »ç¿ëÇÏ°í ÀÓÀÇ Ç¥ÇöÀ» ±ÝÁöÇÑ´Ù.
+»õ ±â´ÉÀº ±âÁ¸ UX ±ÔÄ¢°ú Ãæµ¹ ½Ã ½Å±Ô ÆÐÅÏÀ» µµÀÔÇÏÁö ¾Ê°í ±âÁ¸ ÆÐÅÏ¿¡ ¸ÂÃç ±¸ÇöÇÑ´Ù.
+ÀÌ ¿øÄ¢Àº ÇÐ½À ºñ¿ë°ú »ç¿ëÀÚ ¿À·ù¸¦ ÁÙ¿© Á¦Ç° ½Å·Úµµ¸¦ ³ôÀÎ´Ù.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. ¼º´É ¿¹»ê ÁØ¼ö
+±â´É ´ÜÀ§·Î ¼º´É ¸ñÇ¥¸¦ »çÀü¿¡ Á¤ÀÇÇØ¾ß ÇÏ¸ç, ±âº» ÀÀ´ä/·»´õ¸µ °æ·Î´Â p95 300ms ÀÌÇÏ¸¦
+¸ñÇ¥·Î ÇÑ´Ù. ¹øµé Å©±â, ¸Þ¸ð¸®, ³×Æ®¿öÅ© È£Ãâ ¼ö´Â º¯°æ ÀüÈÄ¸¦ ºñ±³ÇØ ¾ÇÈ­ ½Ã ¿øÀÎ°ú
+¿ÏÈ­ °èÈ¹À» PR¿¡ ±â·ÏÇØ¾ß ÇÑ´Ù. ¼º´É ¿¹»êÀ» ÃÊ°úÇÏ´Â º¯°æÀº ½ÂÀÎ ¾øÀÌ º´ÇÕÇÒ ¼ö ¾ø´Ù.
+ÀÌ ¿øÄ¢Àº ±â´É Ãß°¡ °úÁ¤¿¡¼­ ¼º´É ÀúÇÏ°¡ ´©ÀûµÇ´Â ±¸Á¶Àû À§ÇèÀ» ¹æÁöÇÑ´Ù.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. ÇÑ±Û ÁÖ¼®, ³×ÀÌ¹Ö, ´Ü¼ø ±¸Á¶
+ÁÖ¼®Àº ÇÑ±¹¾î·Î ÀÛ¼ºÇÏ¸ç, "¹«¾ù"ÀÌ ¾Æ´Ñ "¿Ö"¸¦ ¼³¸íÇØ¾ß ÇÑ´Ù. ½Äº°ÀÚ ³×ÀÌ¹ÖÀº
+`PascalCase`(Å¸ÀÔ/ÄÄÆ÷³ÍÆ®), `camelCase`(º¯¼ö/ÇÔ¼ö), `UPPER_SNAKE_CASE`(»ó¼ö),
+`kebab-case`(ÆÄÀÏ/Æú´õ)¸¦ ±âº»À¸·Î ÇÑ´Ù. Æú´õ ±¸Á¶´Â ±â´É Áß½É 2´Ü°è ±íÀÌ¸¦ ±âº»À¸·Î ÇÏ°í
+ºÒÇÊ¿äÇÑ °èÃþ ºÐÇÒÀ» ±ÝÁöÇÑ´Ù.
+ÀÌ ¿øÄ¢Àº Çù¾÷ °¡µ¶¼º, ¿Âº¸µù ¼Óµµ, º¯°æ ¿µÇâ ÃßÀû¼ºÀ» ³ôÀÌ±â À§ÇÑ Ç¥ÁØÀÌ´Ù.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## ±â¼ú ¹× Ç°Áú Ç¥ÁØ
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- ¸ðµç PRÀº Ã¼Å©¸®½ºÆ®·Î ´ÙÀ½ Ç×¸ñÀ» °ËÁõÇØ¾ß ÇÑ´Ù: ÄÚµå Ç°Áú, Å×½ºÆ® Áõ°Å, UX ÀÏ°ü¼º,
+  ¼º´É ¿µÇâ, ³×ÀÌ¹Ö/±¸Á¶ ÁØ¼ö.
+- ¸®ºä¾î´Â ÃÖ¼Ò 1¸í ÀÌ»óÀÌ¾î¾ß ÇÏ¸ç, ¾ÆÅ°ÅØÃ³ ¶Ç´Â UX ±ÔÄ¢ º¯°æÀº 2¸í ÀÌ»ó ½ÂÀÎÀ» ¿ä±¸ÇÑ´Ù.
+- UI º¯°æ PRÀº º¯°æ Àü/ÈÄ ½ºÅ©¸°¼¦ ¶Ç´Â µ¿µîÇÑ °ËÁõ ÀÚ·á¸¦ Æ÷ÇÔÇØ¾ß ÇÑ´Ù.
+- ¼º´É °ËÁõÀº ·ÎÄÃ ¶Ç´Â CI ÃøÁ¤Ä¡ Áß ÀçÇö °¡´ÉÇÑ ¹æ½ÄÀ¸·Î ±â·ÏÇØ¾ß ÇÑ´Ù.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## °³¹ß ¿öÅ©ÇÃ·Î ¹× Ç°Áú °ÔÀÌÆ®
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+1. `spec` ´Ü°è¿¡¼­ »ç¿ëÀÚ ½Ã³ª¸®¿À, UX ÀÏ°ü¼º ±âÁØ, ¼º´É ¸ñÇ¥¸¦ ¸í½ÃÇÑ´Ù.
+2. `plan` ´Ü°è¿¡¼­ Å×½ºÆ® Àü·«(´ÜÀ§/ÅëÇÕ/E2E)°ú ¼º´É ÃøÁ¤ ¹æ¹ýÀ» È®Á¤ÇÑ´Ù.
+3. `tasks` ´Ü°è¿¡¼­ Å×½ºÆ® ÀÛ¾÷À» ±¸Çö ÀÛ¾÷°ú µ¿ÀÏÇÑ ¿ì¼±¼øÀ§·Î ¹èÄ¡ÇÑ´Ù.
+4. ±¸Çö ´Ü°è¿¡¼­ ÄÚµå/Å×½ºÆ®/¹®¼­¸¦ ÇÔ²² °»½ÅÇÏ°í, ÇÑ±Û ÁÖ¼® ¹× ³×ÀÌ¹Ö ±ÔÄ¢À» Á¡°ËÇÑ´Ù.
+5. º´ÇÕ Àü Ç°Áú °ÔÀÌÆ®(Å×½ºÆ® Åë°ú, ¸®ºä ½ÂÀÎ, ¼º´É/UX °ËÁõ)¸¦ ¸ðµÎ ¸¸Á·ÇØ¾ß ÇÑ´Ù.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+ÀÌ ÇåÀåÀº º» ÀúÀå¼ÒÀÇ °³¹ß ±ÔÄ¢¿¡¼­ ÃÖ»óÀ§ ±âÁØÀÌ¸ç, ÇÏÀ§ ¹®¼­´Â º» ÇåÀå°ú Ãæµ¹ÇÒ ¼ö ¾ø´Ù.
+°³Á¤Àº º¯°æ Á¦¾È¼­, ¿µÇâ ºÐ¼®, ÅÛÇÃ¸´ µ¿±âÈ­ °á°ú¸¦ Æ÷ÇÔÇÑ PR·Î ¼öÇàÇÑ´Ù.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+¹öÀü Á¤Ã¥Àº ½Ã¸ÇÆ½ ¹öÀú´×À» µû¸¥´Ù.
+- MAJOR: ¿øÄ¢ »èÁ¦, °­Á¦ ±ÔÄ¢ÀÇ ¿ªÈ£È¯ ºÒ°¡ º¯°æ
+- MINOR: ¿øÄ¢/¼½¼Ç Ãß°¡ ¶Ç´Â °­Á¦ ±âÁØÀÇ ½ÇÁúÀû È®Àå
+- PATCH: ÀÇ¹Ì º¯°æ ¾ø´Â ¹®±¸ ¸íÈ®È­, ¿ÀÅ»ÀÚ, ºñ±â´É ÆíÁý
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+ÄÄÇÃ¶óÀÌ¾ð½º Á¡°ËÀº ¸ðµç PR¿¡¼­ ¼öÇàÇÏ¸ç, ¸®ºä¾î´Â ÇåÀå Ã¼Å© À§¹Ý ½Ã ½ÂÀÎÇÒ ¼ö ¾ø´Ù.
+¹Ý±â 1È¸ ÀÌ»ó ÇåÀå-ÅÛÇÃ¸´ Á¤ÇÕ¼º °¨»ç¸¦ ¼öÇàÇÏ°í °á°ú¸¦ ¹®¼­È­ÇÑ´Ù.
+
+**Version**: 1.0.0 | **Ratified**: 2026-02-16 | **Last Amended**: 2026-02-16
+

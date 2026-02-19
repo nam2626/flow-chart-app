@@ -1,0 +1,246 @@
+﻿openapi: 3.0.3
+info:
+  title: Flowchart App API Contract
+  version: 0.1.0
+  description: Logical contract for flowchart editing, progression, and import/export.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/diagrams:
+    post:
+      summary: Create diagram
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDiagramRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowchartDiagram'
+  /api/diagrams/{diagramId}:
+    get:
+      summary: Get diagram with nodes and progress
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagramAggregate'
+  /api/diagrams/{diagramId}/nodes:
+    post:
+      summary: Add node
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNodeRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowNode'
+  /api/diagrams/{diagramId}/progress/next:
+    post:
+      summary: Move to next step
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '200':
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StepProgressState'
+  /api/diagrams/{diagramId}/import:
+    post:
+      summary: Import JSON and merge into current canvas
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportRequest'
+      responses:
+        '200':
+          description: Merged with conflict report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResult'
+        '413':
+          description: File too large (>5MB)
+  /api/diagrams/{diagramId}/export/json:
+    get:
+      summary: Export diagram JSON
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '200':
+          description: JSON export
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagramAggregate'
+  /api/diagrams/{diagramId}/export/svg:
+    get:
+      summary: Export diagram SVG
+      parameters:
+        - $ref: '#/components/parameters/DiagramId'
+      responses:
+        '200':
+          description: SVG export
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+components:
+  parameters:
+    DiagramId:
+      name: diagramId
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    CreateDiagramRequest:
+      type: object
+      required: [title, canvasWidthPx]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        canvasWidthPx:
+          type: integer
+          minimum: 300
+          maximum: 4000
+    CreateNodeRequest:
+      type: object
+      required: [shapeType, label, stepOrder, x, y, width, height]
+      properties:
+        shapeType:
+          type: string
+          enum: [rectangle, ellipse]
+        label:
+          type: string
+          minLength: 1
+          maxLength: 80
+        stepOrder:
+          type: integer
+          minimum: 1
+        x:
+          type: number
+          minimum: 0
+        y:
+          type: number
+          minimum: 0
+        width:
+          type: number
+          exclusiveMinimum: 0
+        height:
+          type: number
+          exclusiveMinimum: 0
+    FlowchartDiagram:
+      type: object
+      required: [diagramId, title, canvasWidthPx, isTransparentBackground]
+      properties:
+        diagramId:
+          type: string
+        title:
+          type: string
+        canvasWidthPx:
+          type: integer
+          minimum: 300
+          maximum: 4000
+        isTransparentBackground:
+          type: boolean
+    FlowNode:
+      type: object
+      required: [nodeId, diagramId, shapeType, label, stepOrder, isActive]
+      properties:
+        nodeId:
+          type: string
+        diagramId:
+          type: string
+        shapeType:
+          type: string
+          enum: [rectangle, ellipse]
+        label:
+          type: string
+        stepOrder:
+          type: integer
+        isActive:
+          type: boolean
+    StepProgressState:
+      type: object
+      required: [diagramId, currentStepOrder, isAtLastStep, message]
+      properties:
+        diagramId:
+          type: string
+        currentStepOrder:
+          type: integer
+        isAtLastStep:
+          type: boolean
+        message:
+          type: string
+    ImportRequest:
+      type: object
+      required: [fileName, fileSizeBytes, payload]
+      properties:
+        fileName:
+          type: string
+        fileSizeBytes:
+          type: integer
+          maximum: 5242880
+        payload:
+          $ref: '#/components/schemas/DiagramAggregate'
+    ImportConflict:
+      type: object
+      required: [conflictType, resolution]
+      properties:
+        conflictType:
+          type: string
+          enum: [node_id, step_order]
+        resolution:
+          type: string
+          enum: [imported_precedence, keep_existing, custom]
+    ImportResult:
+      type: object
+      required: [merged, defaultResolution, conflicts]
+      properties:
+        merged:
+          type: boolean
+        defaultResolution:
+          type: string
+          enum: [imported_precedence]
+        conflicts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImportConflict'
+    DiagramAggregate:
+      type: object
+      required: [diagram, nodes, progress]
+      properties:
+        diagram:
+          $ref: '#/components/schemas/FlowchartDiagram'
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowNode'
+        progress:
+          $ref: '#/components/schemas/StepProgressState'
