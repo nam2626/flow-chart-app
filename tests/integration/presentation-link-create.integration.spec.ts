@@ -15,7 +15,7 @@ describe('presentation link create integration', () => {
   it('renders presentation route when share code path is opened', () => {
     const state = useFlowchartStore.getState();
     state.addNode('rectangle');
-    const link = createPresentationLink(state.diagram.diagramId, state.diagram.title);
+    const link = createPresentationLink(state.diagram.diagramId, state.diagram.title, [], state.diagram.canvasWidthPx);
     window.history.replaceState({}, '', `/p/${link.shareCode}`);
 
     render(React.createElement(AppShell));

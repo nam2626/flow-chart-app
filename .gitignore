@@ -13,4 +13,10 @@ Thumbs.db
 .codex/
 test-results/
 *.png
+tsconfig.tsbuildinfo
+# TypeScript 컴파일 산출물 (.js/.d.ts) - src/tests 내 TS 소스와 중복
+src/**/*.js
+tests/**/*.js
+vite.config.js
+playwright.config.js
 CON

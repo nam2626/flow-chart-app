@@ -7,8 +7,8 @@ describe('presentation link regenerate', () => {
   });
 
   it('invalidates previous code when regenerated', () => {
-    const first = createPresentationLink('diagram-a', '제목');
-    const next = regeneratePresentationLink('diagram-a', '제목');
+    const first = createPresentationLink('diagram-a', '제목', [], 320);
+    const next = regeneratePresentationLink('diagram-a', '제목', [], 320);
 
     expect(resolvePresentationLinkByCode(first.shareCode)).toBeNull();
     expect(resolvePresentationLinkByCode(next.shareCode)?.diagramId).toBe('diagram-a');

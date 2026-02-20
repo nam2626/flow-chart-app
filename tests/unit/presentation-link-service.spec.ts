@@ -12,11 +12,11 @@ describe('presentation link service', () => {
   });
 
   it('creates link and resolves by code', () => {
-    const created = createPresentationLink('d1', '문서 제목');
+    const created = createPresentationLink('d1', '문서 제목', [], 320);
     expect(created.shareCode.length).toBeGreaterThanOrEqual(6);
     expect(created.url).toContain('/p/');
 
-    const loaded = getPresentationLink('d1');
+    const loaded = getPresentationLink('d1', [], 320);
     expect(loaded?.shareCode).toBe(created.shareCode);
 
     const resolved = resolvePresentationLinkByCode(created.shareCode);
@@ -24,8 +24,8 @@ describe('presentation link service', () => {
   });
 
   it('regenerates link with a new code', () => {
-    const first = createPresentationLink('d1', '문서 제목');
-    const next = regeneratePresentationLink('d1', '문서 제목');
+    const first = createPresentationLink('d1', '문서 제목', [], 320);
+    const next = regeneratePresentationLink('d1', '문서 제목', [], 320);
     expect(next.shareCode).not.toBe(first.shareCode);
   });
 });
