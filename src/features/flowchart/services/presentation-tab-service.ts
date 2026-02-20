@@ -55,8 +55,8 @@ function renderConnector(rowHeight: number): string {
   const lineHeight = Math.max(8, rowHeight - 10);
   return `
     <div style="height:${rowHeight}px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <div style="width:2px; height:${lineHeight}px; background:${presentationTheme.arrowStroke};"></div>
-      <div style="width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:10px solid ${presentationTheme.arrowStroke};"></div>
+      <div style="width:4px; height:${lineHeight}px; background:${presentationTheme.arrowStroke};"></div>
+      <div style="width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent; border-top:20px solid ${presentationTheme.arrowStroke};"></div>
     </div>
   `;
 }

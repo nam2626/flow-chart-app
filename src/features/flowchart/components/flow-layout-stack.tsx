@@ -31,14 +31,14 @@ function renderConnector(mode: 'edit' | 'presentation', rowHeight: number, testI
         pointerEvents: 'none'
       }}
     >
-      <div style={{ width: '2px', height: `${Math.max(8, rowHeight - 10)}px`, background: stroke }} />
+      <div style={{ width: '4px', height: `${Math.max(8, rowHeight - 10)}px`, background: stroke }} />
       <div
         style={{
           width: 0,
           height: 0,
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent',
-          borderTop: `10px solid ${markerFill}`
+          borderLeft: '12px solid transparent',
+          borderRight: '12px solid transparent',
+          borderTop: `20px solid ${markerFill}`
         }}
       />
     </div>
