@@ -31,7 +31,7 @@ export const presentationTheme: PresentationTheme = {
   activeGlow: `0 0 ${BASELINE_SHADOW_BLUR_PX * HIGHLIGHT_MULTIPLIER}px ${BASELINE_SHADOW_SPREAD_PX * HIGHLIGHT_MULTIPLIER}px rgba(15, 76, 129, ${SHADOW_OPACITY})`,
   canvasBorder: '#94a3b8',
   containerBorderPolicy: 'NONE',
-  canvasBackground: '#fcfdff',
+  canvasBackground: 'transparent',
   textSizeEm: PRESENTATION_TEXT_SIZE_EM,
   baselineShadowBlurPx: BASELINE_SHADOW_BLUR_PX,
   baselineShadowSpreadPx: BASELINE_SHADOW_SPREAD_PX,

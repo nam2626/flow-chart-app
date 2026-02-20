@@ -77,7 +77,20 @@ export function PresentationRoute({ shareCode }: PresentationRouteProps): JSX.El
   const renderCanvasWidth = hashSnapshot?.canvasWidthPx ?? store.diagram.canvasWidthPx;
 
   return (
-    <main data-testid="presentation-route" data-share-code={shareCode} style={{ margin: '0 auto', padding: '16px' }}>
+    <main
+      data-testid="presentation-route"
+      data-share-code={shareCode}
+      style={{
+        margin: 0,
+        padding: 0,
+        width: '100vw',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'transparent'
+      }}
+    >
       <PresentationMode nodes={renderNodes} canvasWidthPx={renderCanvasWidth} />
     </main>
   );

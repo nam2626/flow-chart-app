@@ -12,7 +12,16 @@ export function PresentationMode({ nodes, canvasWidthPx }: PresentationModeProps
     <section
       data-testid="presentation-mode-root"
       aria-label="presentation-mode"
-      style={{ display: 'flex', justifyContent: 'center' }}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        minHeight: '100vh',
+        margin: 0,
+        padding: 0,
+        background: 'transparent'
+      }}
     >
       <FlowLayoutStack mode="presentation" nodes={nodes} canvasWidthPx={canvasWidthPx} />
     </section>

@@ -57,9 +57,9 @@ export function FlowLayoutStack({ nodes, mode, canvasWidthPx, onLabelChange, onC
         width: `${canvasWidthPx}px`,
         // 프레젠테이션에서는 시선 분산을 막기 위해 컨테이너 테두리를 항상 제거한다.
         border: mode === 'presentation' ? 'none' : `1px dashed ${editorVisualRules.colors.panelBorder}`,
-        background: mode === 'presentation' ? presentationTheme.canvasBackground : 'transparent',
-        padding: `${editorVisualRules.spacing.sectionGapPx * 2}px 0 ${editorVisualRules.spacing.sectionGapPx * 3}px 0`,
-        minHeight: mode === 'presentation' ? '320px' : undefined
+        background: mode === 'presentation' ? 'transparent' : 'transparent',
+        padding: mode === 'presentation' ? 0 : `${editorVisualRules.spacing.sectionGapPx * 2}px 0 ${editorVisualRules.spacing.sectionGapPx * 3}px 0`,
+        minHeight: mode === 'presentation' ? undefined : undefined
       }}
     >
       {sortedNodes.map((node, index) => (
