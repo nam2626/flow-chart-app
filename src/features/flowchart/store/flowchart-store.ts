@@ -6,6 +6,7 @@ import type {
   FlowchartState,
   PresentationSession,
   PresentationLinkMetadata,
+  PresentationShadowSettings,
   ShapeType
 } from '@features/flowchart/models/flowchart-types';
 import { FLOW_MESSAGES } from '@features/flowchart/models/ux-copy';
@@ -38,6 +39,7 @@ interface FlowchartStore extends FlowchartState {
   prevPresentationStep: () => void;
   stopPresentation: () => void;
   setPresentationLinkMetadata: (shareCode: string | null, status: PresentationLinkMetadata['status']) => void;
+  setPresentationShadow: (settings: Partial<PresentationShadowSettings>) => void;
 }
 
 const DEFAULT_CANVAS_WIDTH = 320;
@@ -79,6 +81,15 @@ const initialState: FlowchartState = {
     status: null,
     generatedAt: null,
     regeneratedAt: null
+  },
+  presentationShadow: {
+    enabled: true,
+    color: '#0f4c81',
+    blur: 24,
+    spread: 6,
+    opacity: 0.55,
+    offsetX: 0,
+    offsetY: 4
   },
   lastSnapshot: null,
   shortcut: {
@@ -142,10 +153,11 @@ function persistNodeStyle(node: FlowNode): void {
   });
 }
 
-function publishSyncSnapshot(nodes: FlowNode[]): void {
+function publishSyncSnapshot(nodes: FlowNode[], shadow?: PresentationShadowSettings): void {
   writePresentationSyncSnapshot({
     revisionId: newId(),
     nodes,
+    ...(shadow !== undefined ? { presentationShadow: shadow } : {}),
     updatedAt: nowIso()
   });
 }
@@ -360,7 +372,7 @@ export const useFlowchartStore = create<FlowchartStore>()(
           const firstOrder = rePos[0].stepOrder;
           const activeNodeId = rePos[0].nodeId;
           const withActive = rePos.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId }));
-          renderPresentationTab(openResult.tab, withActive, firstOrder, state.diagram.title);
+          renderPresentationTab(openResult.tab, withActive, firstOrder, state.diagram.title, state.presentationShadow);
           if (durationMs > PRESENTATION_ENTRY_P95_BUDGET_MS) {
             console.warn(`레이아웃 재배치 지연 감지: ${Math.round(durationMs)}ms`);
           }
@@ -401,7 +413,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
               presentationWindowRef,
               state.nodes.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId })),
               next.currentStepOrder,
-              state.diagram.title
+              state.diagram.title,
+              state.presentationShadow
             );
           }
 
@@ -428,7 +441,8 @@ export const useFlowchartStore = create<FlowchartStore>()(
               presentationWindowRef,
               state.nodes.map((node) => ({ ...node, isActive: node.nodeId === activeNodeId })),
               prev.currentStepOrder,
-              state.diagram.title
+              state.diagram.title,
+              state.presentationShadow
             );
           }
 
@@ -467,6 +481,13 @@ export const useFlowchartStore = create<FlowchartStore>()(
             regeneratedAt: shareCode && status === 'active' ? nowIso() : state.presentationLink.regeneratedAt
           }
         }));
+      },
+      setPresentationShadow: (settings) => {
+        set((state) => {
+          const next = { ...state.presentationShadow, ...settings };
+          publishSyncSnapshot(state.nodes, next);
+          return { presentationShadow: next };
+        });
       }
     }),
     {
@@ -512,6 +533,10 @@ export const useFlowchartStore = create<FlowchartStore>()(
           presentationLink: {
             ...initialState.presentationLink,
             ...(state.presentationLink ?? {})
+          },
+          presentationShadow: {
+            ...initialState.presentationShadow,
+            ...(state.presentationShadow ?? {})
           },
           lastSnapshot: state.lastSnapshot ?? null,
           shortcut: {

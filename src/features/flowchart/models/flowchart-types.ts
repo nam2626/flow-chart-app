@@ -138,12 +138,23 @@ export const CENTER_X_TOLERANCE_PX = 0 as const;
 
 export type PngExportReasonCode = 'EMPTY_STEP_TEXT' | 'EMPTY_DIAGRAM' | 'INVALID_SOURCE_VIEW' | 'RENDER_FAILED';
 
+export interface PresentationShadowSettings {
+  enabled: boolean;
+  color: string;
+  blur: number;
+  spread: number;
+  opacity: number;
+  offsetX: number;
+  offsetY: number;
+}
+
 export interface FlowchartState {
   diagram: FlowchartDiagram;
   nodes: FlowNode[];
   progress: StepProgressState;
   presentation: PresentationSession;
   presentationLink: PresentationLinkMetadata;
+  presentationShadow: PresentationShadowSettings;
   lastSnapshot: ChartStateSnapshot | null;
   shortcut: ShortcutPreference;
 }

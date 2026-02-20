@@ -2,6 +2,7 @@
 import { CanvasWidthControl } from '@features/flowchart/components/canvas-width-control';
 import { ImportConflictDialog } from '@features/flowchart/components/import-conflict-dialog';
 import { PresentationLinkPanel } from '@features/flowchart/components/presentation-link-panel';
+import { PresentationShadowPanel } from '@features/flowchart/components/presentation-shadow-panel';
 import { editorVisualRules } from '@features/flowchart/models/editor-visual-rules';
 import { FLOW_MESSAGES } from '@features/flowchart/models/ux-copy';
 import { exportDiagramJson, exportDiagramSvg } from '@features/flowchart/services/json-transfer-service';
@@ -14,6 +15,7 @@ export function DiagramToolbar(): JSX.Element {
   const [open, setOpen] = useState(false);
   const [fileMenuOpen, setFileMenuOpen] = useState(true);
   const [canvasSettingsOpen, setCanvasSettingsOpen] = useState(true);
+  const [shadowPanelOpen, setShadowPanelOpen] = useState(false);
   const fileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -208,6 +210,32 @@ export function DiagramToolbar(): JSX.Element {
               }}
             >
               <CanvasWidthControl />
+            </div>
+          ) : null}
+        </div>
+
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={() => setShadowPanelOpen((prev) => !prev)}
+            style={{ ...toolbarButtonStyle, minWidth: '138px', fontWeight: 600 }}
+          >
+            Shadow Settings
+          </button>
+          {shadowPanelOpen ? (
+            <div
+              style={{
+                position: 'absolute',
+                top: '38px',
+                right: 0,
+                zIndex: 15,
+                width: '320px',
+                border: '1px solid #d5dbe6',
+                borderRadius: '10px',
+                background: '#ffffff',
+                boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)'
+              }}
+            >
+              <PresentationShadowPanel />
             </div>
           ) : null}
         </div>

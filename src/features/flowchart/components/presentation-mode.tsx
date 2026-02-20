@@ -1,13 +1,14 @@
 ﻿import React from 'react';
-import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+import type { FlowNode, PresentationShadowSettings } from '@features/flowchart/models/flowchart-types';
 import { FlowLayoutStack } from '@features/flowchart/components/flow-layout-stack';
 
 interface PresentationModeProps {
   nodes: FlowNode[];
   canvasWidthPx: number;
+  shadowSettings?: PresentationShadowSettings;
 }
 
-export function PresentationMode({ nodes, canvasWidthPx }: PresentationModeProps): JSX.Element {
+export function PresentationMode({ nodes, canvasWidthPx, shadowSettings }: PresentationModeProps): JSX.Element {
   return (
     <section
       data-testid="presentation-mode-root"
@@ -23,7 +24,7 @@ export function PresentationMode({ nodes, canvasWidthPx }: PresentationModeProps
         background: 'transparent'
       }}
     >
-      <FlowLayoutStack mode="presentation" nodes={nodes} canvasWidthPx={canvasWidthPx} />
+      <FlowLayoutStack mode="presentation" nodes={nodes} canvasWidthPx={canvasWidthPx} shadowSettings={shadowSettings} />
     </section>
   );
 }

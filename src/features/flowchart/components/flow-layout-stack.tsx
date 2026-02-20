@@ -1,13 +1,15 @@
 ﻿import React, { useMemo } from 'react';
-import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+import type { FlowNode, PresentationShadowSettings } from '@features/flowchart/models/flowchart-types';
 import { editorVisualRules } from '@features/flowchart/models/editor-visual-rules';
 import { presentationTheme } from '@features/flowchart/models/presentation-theme';
 import { buildConnectorFlowRows } from '@features/flowchart/services/center-connector-service';
+import { buildBoxShadow } from '@features/flowchart/components/presentation-shadow-panel';
 
 interface FlowLayoutStackProps {
   nodes: FlowNode[];
   mode: 'edit' | 'presentation';
   canvasWidthPx: number;
+  shadowSettings?: PresentationShadowSettings;
   onLabelChange?: (nodeId: string, label: string) => void;
   onColorChange?: (nodeId: string, fillColor: string, borderColor: string) => void;
   onDelete?: (nodeId: string) => void;
@@ -43,7 +45,7 @@ function renderConnector(mode: 'edit' | 'presentation', rowHeight: number, testI
   );
 }
 
-export function FlowLayoutStack({ nodes, mode, canvasWidthPx, onLabelChange, onColorChange, onDelete }: FlowLayoutStackProps): JSX.Element {
+export function FlowLayoutStack({ nodes, mode, canvasWidthPx, shadowSettings, onLabelChange, onColorChange, onDelete }: FlowLayoutStackProps): JSX.Element {
   const sortedNodes = useMemo(() => [...nodes].sort((a, b) => a.stepOrder - b.stepOrder), [nodes]);
   const connectorRows = useMemo(() => buildConnectorFlowRows(sortedNodes), [sortedNodes]);
 
@@ -55,10 +57,12 @@ export function FlowLayoutStack({ nodes, mode, canvasWidthPx, onLabelChange, onC
         flexDirection: 'column',
         alignItems: 'center',
         width: `${canvasWidthPx}px`,
+        overflow: 'visible',
         // 프레젠테이션에서는 시선 분산을 막기 위해 컨테이너 테두리를 항상 제거한다.
         border: mode === 'presentation' ? 'none' : `1px dashed ${editorVisualRules.colors.panelBorder}`,
         background: mode === 'presentation' ? 'transparent' : 'transparent',
-        padding: mode === 'presentation' ? 0 : `${editorVisualRules.spacing.sectionGapPx * 2}px 0 ${editorVisualRules.spacing.sectionGapPx * 3}px 0`,
+        // 그림자가 컨테이너 경계에 잘리지 않도록 패딩 확보
+        padding: mode === 'presentation' ? '32px 40px' : `${editorVisualRules.spacing.sectionGapPx * 2}px 0 ${editorVisualRules.spacing.sectionGapPx * 3}px 0`,
         minHeight: mode === 'presentation' ? undefined : undefined
       }}
     >
@@ -74,7 +78,11 @@ export function FlowLayoutStack({ nodes, mode, canvasWidthPx, onLabelChange, onC
                 border: `2px solid ${node.borderColor ?? presentationTheme.nodeBorder}`,
                 background: node.fillColor ?? presentationTheme.nodeFill,
                 color: presentationTheme.nodeText,
-                boxShadow: node.isActive ? presentationTheme.activeGlow : 'none',
+                boxShadow: node.isActive
+                  ? shadowSettings
+                    ? `${buildBoxShadow(shadowSettings)}, ${presentationTheme.activeGlow}`
+                    : presentationTheme.activeGlow
+                  : 'none',
                 display: 'grid',
                 placeItems: 'center',
                 padding: '10px',

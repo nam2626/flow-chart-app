@@ -9,7 +9,7 @@ import {
 } from '@features/flowchart/services/presentation-error-service';
 import { recordPresentationAccessEvent } from '@features/flowchart/services/presentation-access-event-service';
 import { readPresentationSyncSnapshot, subscribePresentationSync } from '@features/flowchart/services/presentation-session-sync-service';
-import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+import type { FlowNode, PresentationShadowSettings } from '@features/flowchart/models/flowchart-types';
 
 interface PresentationRouteProps {
   shareCode: string;
@@ -17,9 +17,11 @@ interface PresentationRouteProps {
 
 export function PresentationRoute({ shareCode }: PresentationRouteProps): JSX.Element {
   const store = useFlowchartStore();
+  const storeShadow = useFlowchartStore((s) => s.presentationShadow);
   const [deniedCode, setDeniedCode] = useState<PresentationAccessErrorCode | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
   const [syncNodes, setSyncNodes] = useState<FlowNode[] | null>(null);
+  const [syncShadow, setSyncShadow] = useState<PresentationShadowSettings | null>(null);
 
   // URL 해시(#d=...)에 인코딩된 스냅샷 — OBS/외부 브라우저 컨텍스트에서 localStorage 없이도 렌더링 가능
   const hashSnapshot = useMemo(() => decodeSnapshotFromHash(window.location.hash), []);
@@ -39,6 +41,9 @@ export function PresentationRoute({ shareCode }: PresentationRouteProps): JSX.El
     const unsubscribe = subscribePresentationSync((payload) => {
       recordPresentationAccessEvent(shareCode, 'sync_update');
       setSyncNodes(payload.nodes);
+      if (payload.presentationShadow) {
+        setSyncShadow(payload.presentationShadow);
+      }
       setRefreshTick((prev) => prev + 1);
     });
 
@@ -75,6 +80,7 @@ export function PresentationRoute({ shareCode }: PresentationRouteProps): JSX.El
   // 우선순위: 동일 브라우저 실시간 싱크 > URL 해시 스냅샷 > Zustand store
   const renderNodes = syncNodes ?? hashSnapshot?.nodes ?? store.nodes;
   const renderCanvasWidth = hashSnapshot?.canvasWidthPx ?? store.diagram.canvasWidthPx;
+  const renderShadow = syncShadow ?? hashSnapshot?.presentationShadow ?? storeShadow;
 
   return (
     <main
@@ -91,7 +97,7 @@ export function PresentationRoute({ shareCode }: PresentationRouteProps): JSX.El
         background: 'transparent'
       }}
     >
-      <PresentationMode nodes={renderNodes} canvasWidthPx={renderCanvasWidth} />
+      <PresentationMode nodes={renderNodes} canvasWidthPx={renderCanvasWidth} shadowSettings={renderShadow} />
     </main>
   );
 }

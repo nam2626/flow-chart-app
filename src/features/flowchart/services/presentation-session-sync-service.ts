@@ -1,8 +1,9 @@
-﻿import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+﻿import type { FlowNode, PresentationShadowSettings } from '@features/flowchart/models/flowchart-types';
 
 export interface PresentationSyncPayload {
   revisionId: string;
   nodes: FlowNode[];
+  presentationShadow?: PresentationShadowSettings;
   updatedAt: string;
 }
 

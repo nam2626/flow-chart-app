@@ -1,4 +1,4 @@
-﻿import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+﻿import type { FlowNode, PresentationShadowSettings } from '@features/flowchart/models/flowchart-types';
 import { presentationTheme } from '@features/flowchart/models/presentation-theme';
 import { buildConnectorFlowRows } from '@features/flowchart/services/center-connector-service';
 
@@ -16,12 +16,22 @@ function escapeHtml(input: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function renderNode(node: FlowNode, currentOrder: number): string {
+function buildShadowCss(shadow: PresentationShadowSettings | undefined, isActive: boolean): string {
+  if (!isActive) return 'none';
+  if (!shadow) return presentationTheme.activeGlow;
+  const r = parseInt(shadow.color.replace('#', '').slice(0, 2), 16);
+  const g = parseInt(shadow.color.replace('#', '').slice(2, 4), 16);
+  const b = parseInt(shadow.color.replace('#', '').slice(4, 6), 16);
+  const custom = `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blur}px ${shadow.spread}px rgba(${r},${g},${b},${shadow.opacity})`;
+  return `${custom}, ${presentationTheme.activeGlow}`;
+}
+
+function renderNode(node: FlowNode, currentOrder: number, shadow?: PresentationShadowSettings): string {
   const isActive = node.stepOrder === currentOrder;
   const borderRadius = node.shapeType === 'ellipse' ? '50%' : '8px';
   const fillColor = node.fillColor ?? presentationTheme.nodeFill;
   const borderColor = node.borderColor ?? presentationTheme.nodeBorder;
-  const boxShadow = isActive ? presentationTheme.activeGlow : 'none';
+  const boxShadow = buildShadowCss(shadow, isActive);
 
   return `
     <div style="
@@ -51,7 +61,7 @@ function renderConnector(rowHeight: number): string {
   `;
 }
 
-function buildHtml(nodes: FlowNode[], currentOrder: number, title = 'Presentation'): string {
+function buildHtml(nodes: FlowNode[], currentOrder: number, title = 'Presentation', shadow?: PresentationShadowSettings): string {
   const sorted = [...nodes].sort((a, b) => a.stepOrder - b.stepOrder);
   const connectorRows = buildConnectorFlowRows(sorted);
   const canvasWidth = Math.max(320, ...sorted.map((node) => node.width), 320);
@@ -59,7 +69,7 @@ function buildHtml(nodes: FlowNode[], currentOrder: number, title = 'Presentatio
   const stackHtml = sorted
     .map((node, index) => {
       const connectorHtml = index < sorted.length - 1 ? renderConnector(connectorRows[index]?.rowHeight ?? 40) : '';
-      return `${renderNode(node, currentOrder)}${connectorHtml}`;
+      return `${renderNode(node, currentOrder, shadow)}${connectorHtml}`;
     })
     .join('');
 
@@ -69,13 +79,13 @@ function buildHtml(nodes: FlowNode[], currentOrder: number, title = 'Presentatio
   <meta charset="utf-8" />
   <title>${escapeHtml(title)}</title>
   <style>
-    html, body { margin:0; padding:0; background:${presentationTheme.canvasBackground}; }
+    html, body { margin:0; padding:0; background:transparent; }
     body { font-family: sans-serif; }
   </style>
 </head>
 <body>
-  <main style="min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:24px;">
-    <section data-testid="presentation-flow-container" style="display:flex; flex-direction:column; align-items:center; width:${canvasWidth}px; border:none; background:${presentationTheme.canvasBackground}; padding:24px 0 32px 0; min-height:320px;">
+  <main style="min-height:100vh; display:flex; align-items:center; justify-content:center;">
+    <section data-testid="presentation-flow-container" style="display:flex; flex-direction:column; align-items:center; width:${canvasWidth}px; border:none; background:transparent; padding:32px 40px; overflow:visible;">
       ${stackHtml}
     </section>
   </main>
@@ -91,13 +101,13 @@ export function openPresentationTab(): OpenPresentationTabResult {
   return { ok: true, tab };
 }
 
-export function renderPresentationTab(tab: Window, nodes: FlowNode[], currentOrder: number, title?: string): void {
+export function renderPresentationTab(tab: Window, nodes: FlowNode[], currentOrder: number, title?: string, shadow?: PresentationShadowSettings): void {
   if (tab === window) {
     return;
   }
   const doc = tab.document;
   doc.open();
-  doc.write(buildHtml(nodes, currentOrder, title));
+  doc.write(buildHtml(nodes, currentOrder, title, shadow));
   doc.close();
 }
 

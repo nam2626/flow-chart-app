@@ -1,6 +1,6 @@
 ﻿import { generateUniqueShareCode } from '@features/flowchart/services/presentation-link-code-service';
 import type { PresentationLinkModel } from '@features/flowchart/models/presentation-link-model';
-import type { FlowNode } from '@features/flowchart/models/flowchart-types';
+import type { FlowNode, PresentationShadowSettings } from '@features/flowchart/models/flowchart-types';
 import { nowIso } from '@shared/utils/id-utils';
 
 const STORAGE_KEY = 'flowchart-presentation-links-v1';
@@ -10,6 +10,7 @@ type LinkStore = Record<string, PresentationLinkModel>;
 export interface PresentationSnapshotPayload {
   nodes: FlowNode[];
   canvasWidthPx: number;
+  presentationShadow?: PresentationShadowSettings;
 }
 
 /**
@@ -41,8 +42,8 @@ function writeStore(store: LinkStore): void {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 }
 
-function buildUrl(code: string, nodes: FlowNode[], canvasWidthPx: number): string {
-  const payload: PresentationSnapshotPayload = { nodes, canvasWidthPx };
+function buildUrl(code: string, nodes: FlowNode[], canvasWidthPx: number, shadow?: PresentationShadowSettings): string {
+  const payload: PresentationSnapshotPayload = { nodes, canvasWidthPx, ...(shadow ? { presentationShadow: shadow } : {}) };
   return `${window.location.origin}/p/${code}#d=${encodeURIComponent(JSON.stringify(payload))}`;
 }
 
@@ -50,16 +51,16 @@ export interface PresentationLinkViewModel extends PresentationLinkModel {
   url: string;
 }
 
-export function getPresentationLink(diagramId: string, nodes: FlowNode[], canvasWidthPx: number): PresentationLinkViewModel | null {
+export function getPresentationLink(diagramId: string, nodes: FlowNode[], canvasWidthPx: number, shadow?: PresentationShadowSettings): PresentationLinkViewModel | null {
   const store = readStore();
   const found = store[diagramId];
   if (!found || found.status !== 'active') {
     return null;
   }
-  return { ...found, url: buildUrl(found.shareCode, nodes, canvasWidthPx) };
+  return { ...found, url: buildUrl(found.shareCode, nodes, canvasWidthPx, shadow) };
 }
 
-export function createPresentationLink(diagramId: string, documentTitle: string, nodes: FlowNode[], canvasWidthPx: number): PresentationLinkViewModel {
+export function createPresentationLink(diagramId: string, documentTitle: string, nodes: FlowNode[], canvasWidthPx: number, shadow?: PresentationShadowSettings): PresentationLinkViewModel {
   const store = readStore();
   const existingCodes = Object.values(store)
     .filter((item) => item.status === 'active')
@@ -75,10 +76,10 @@ export function createPresentationLink(diagramId: string, documentTitle: string,
   };
   store[diagramId] = next;
   writeStore(store);
-  return { ...next, url: buildUrl(shareCode, nodes, canvasWidthPx) };
+  return { ...next, url: buildUrl(shareCode, nodes, canvasWidthPx, shadow) };
 }
 
-export function regeneratePresentationLink(diagramId: string, documentTitle: string, nodes: FlowNode[], canvasWidthPx: number): PresentationLinkViewModel {
+export function regeneratePresentationLink(diagramId: string, documentTitle: string, nodes: FlowNode[], canvasWidthPx: number, shadow?: PresentationShadowSettings): PresentationLinkViewModel {
   const store = readStore();
   const existingCodes = Object.values(store)
     .filter((item) => item.diagramId !== diagramId && item.status === 'active')
@@ -95,7 +96,7 @@ export function regeneratePresentationLink(diagramId: string, documentTitle: str
   };
   store[diagramId] = next;
   writeStore(store);
-  return { ...next, url: buildUrl(shareCode, nodes, canvasWidthPx) };
+  return { ...next, url: buildUrl(shareCode, nodes, canvasWidthPx, shadow) };
 }
 
 export function resolvePresentationLinkByCode(shareCode: string): PresentationLinkModel | null {

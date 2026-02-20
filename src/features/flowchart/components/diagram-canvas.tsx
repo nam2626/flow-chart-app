@@ -13,6 +13,7 @@ import { useFlowchartStore } from '@features/flowchart/store/flowchart-store';
 export function DiagramCanvas(): JSX.Element {
   const { diagram, nodes, addNode, presentation, shortcut, updateNodeLabel, updateNodeColors, removeNode, nextPresentationStep } =
     useFlowchartStore();
+  const presentationShadow = useFlowchartStore((s) => s.presentationShadow);
   const showEmbeddedPresentation = presentation.isRunning && !presentation.openedInNewTab;
   const activeNode = nodes.find((node) => node.nodeId === diagram.activeNodeId) ?? null;
 
@@ -52,7 +53,7 @@ export function DiagramCanvas(): JSX.Element {
       <ProgressionBanner />
 
       {showEmbeddedPresentation ? (
-        <PresentationMode nodes={sortedNodes} canvasWidthPx={diagram.canvasWidthPx} />
+        <PresentationMode nodes={sortedNodes} canvasWidthPx={diagram.canvasWidthPx} shadowSettings={presentationShadow} />
       ) : (
         <section
           data-testid="editor-layout-grid"
